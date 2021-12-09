@@ -1,0 +1,1 @@
+print(int(str(bin(65)),2))
