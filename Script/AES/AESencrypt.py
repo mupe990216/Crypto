@@ -1,6 +1,7 @@
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 from Crypto.Random import get_random_bytes
+from tkinter import filedialog                                           
 
 key = get_random_bytes(16)
 
@@ -10,7 +11,10 @@ kFile.close()
 
 cipher = AES.new(key, AES.MODE_CBC)
 
-pFile = open("img_Original.jpg","rb")
+path = filedialog.askopenfilename(title="Select your Art",filetypes=(("jpg files","*.jpg"),("All files","*.*")))
+filename = path.split("/")
+
+pFile = open(filename[-1],"rb")
 plaintext = pFile.read()
 pFile.close
 

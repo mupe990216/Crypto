@@ -1,11 +1,16 @@
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
+from tkinter import filedialog
 
 kFile = open("Key","rb")
 key = kFile.read()
 kFile.close()
 
-cFile = open("img_Cipher.jpg","rb")
+
+path = filedialog.askopenfilename(title="Select your Art",filetypes=(("jpg files","*.jpg"),("All files","*.*")))
+filename = path.split("/")                                           
+
+cFile = open(filename[-1],"rb")
 iv = cFile.read(len(key))
 ciphertext = cFile.read()
 cFile.close()
