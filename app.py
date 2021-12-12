@@ -1,8 +1,12 @@
-import json
+import json, os
 from Script.BD.database import *
-from flask import Flask, render_template, request, url_for, redirect, session
+from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
+from werkzeug.utils import secure_filename
+UPLOAD_FOLDER = os.path.abspath("./uploads/")
+
 app = Flask(__name__, static_folder='static',template_folder='templates')
 app.config['SECRET_KEY'] = '12345678'
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 @app.route('/',methods=['GET'])
 def init():
@@ -50,11 +54,11 @@ def menu():
                 session["gender"] = response
                 close_db(conexion)
                 if(session["typeUser"] == 1):
-                    return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"])
+                    return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
                 if(session["typeUser"] == 2):
-                    return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"])
+                    return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
                 if(session["typeUser"] == 3):
-                    return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"])
+                    return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
             else:
                 close_db(conexion)
                 return redirect(url_for("init"))
@@ -63,6 +67,34 @@ def menu():
     except Exception as e:
         print("\n {} \n".format(e))
         return redirect(url_for("init"))
+
+@app.route('/upload',methods=['GET','POST'])
+def upload():
+    try:        
+        if session["user"]!=None:
+            if request.method == 'GET':
+                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=1)
+            else:
+                if not "imageFile" in request.files:
+                    return "No file part in the form."
+                file = request.files["imageFile"]
+                filename = file.filename
+                if(filename==""):
+                    return "Select a valid file"
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config["UPLOAD_FOLDER"],filename))
+                return "Ok"
+                # return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
+        else:
+            return redirect(url_for("init"))
+    except Exception as e:
+        print("\n {} \n".format(e))
+        return redirect(url_for("init"))
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg"])
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def init_db():
     conexion = conecta_db("DESart.db")

@@ -4,11 +4,52 @@
 <div class="row">
     <article class="col s12 center-align">
 
+        {% if opc == 0 %}
         <p>
-            <h2>Welcome {{nombre}} !</h2>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <h2>Welcome {{nombre}} !</h2>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         </p>
+        {% endif %}
+
+        {% if opc == 1 %}
+        <br>
+        <h2 class="center-align">Upload image file</h2>
+        <div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
+            <div class="row">
+                <form class="col s12" method="POST" action="/upload" enctype="multipart/form-data"><br>
+                    <h4 class="center-align">Select an image file</h4>
+                    <div class="row">
+                        <div class="file-field input-field col m12 l8 offset-l2">
+                            <div class="btn">
+                                <span>File</span>
+                                <input type="file" name="imageFile" id="imageFile" onchange="return validarExt()">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col m12 l8 offset-l2" id="visorArchivo">
+                            <!--Aqui se desplegará el fichero-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col m6 offset-m3 l6 offset-l3">
+                            <button onclick="sendImage()" type="button" class="btn-large waves-effect waves-light">
+                                Send&nbsp;&nbsp;<i class="zmdi zmdi-mail-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><br><br>
+        {% endif %}
 
     </article>
 </div>
+{% endblock %}
+
+{% block finalJS %}
+<script src="{{ url_for('static',filename='js/functions.js') }}"></script>
 {% endblock %}
