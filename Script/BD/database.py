@@ -52,7 +52,19 @@ def crea_tbs(conexion):
 					foreign key(email) references persona(email)
 				)
 			"""
+		)    
+	cursor_tb.execute(
+			"""
+				create table if not exists keySinFirma(
+					idKey integer not null primary key autoincrement,
+					namekey text not null,
+					hashname text not null,
+					fecha timestamp default current_timestamp,
+					foreign key(hashname) references artes(hashname)
+				)
+			"""
 		)
+    
 	# Ingresamos los tipos de usuario que tendra el sistema
 	llena_cats(conexion,"tipoUsr","idTipoUsr","1",[1,'Artist'],'idTipoUsr,descrip')
 	llena_cats(conexion,"tipoUsr","idTipoUsr","2",[2,'Client'],'idTipoUsr,descrip')
@@ -233,6 +245,25 @@ def modifica_art(conexion,art):
     cursor_tb.execute(sentencia)
     conexion.commit()
     return "Art signed successful"
+
+def valida_key(conexion,keyname):
+    mensaje = ""
+    cursor_tb = conexion.cursor()
+    sentencia = "select count(*) from keySinFirma where namekey='{}'".format(keyname)
+    respuesta = cursor_tb.execute(sentencia).fetchone()[0]
+    if(respuesta != 0):
+        mensaje = "Key Existente"
+    else:
+        mensaje = "Sin existencia"
+    return mensaje
+
+def registra_keySinFirma(conexion,keyname,hashImg):
+    cursor_tb = conexion.cursor()
+    mensaje = valida_key(conexion,keyname)
+    if(mensaje == "Sin existencia"):
+        sentencia = "insert into keySinFirma(namekey,hashname) values(?,?)"
+        cursor_tb.execute(sentencia,(keyname,hashImg))
+        conexion.commit()
 
 # Test section
 # conexion = conecta_db("DESart.db")

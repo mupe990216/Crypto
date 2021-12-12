@@ -1,17 +1,24 @@
 import json, os
 from Script.BD.database import *
 from Script.PIC.pictures import *
-from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
+from Script.AES.AESfunctions import *
+from flask import Flask, render_template, request, url_for, redirect, session
 from werkzeug.utils import secure_filename
+KEY_FOLDER = os.path.abspath("./keys/")
 ART_FOLDER = os.path.abspath("./static/arts/")
+CIPHER_FOLDER = os.path.abspath("./static/ciphers/")
 UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
 PREVIEW_FOLDER = os.path.abspath("./static/preview/")
+DECIPHER_FOLDER = os.path.abspath("./static/deciphers/")
 
 app = Flask(__name__, static_folder='static',template_folder='templates')
 app.config['SECRET_KEY'] = '12345678'
+app.config["KEY_FOLDER"] = KEY_FOLDER
 app.config["ART_FOLDER"] = ART_FOLDER
+app.config["CIPHER_FOLDER"] = CIPHER_FOLDER
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["PREVIEW_FOLDER"] = PREVIEW_FOLDER
+app.config["DECIPHER_FOLDER"] = DECIPHER_FOLDER
 
 @app.route('/',methods=['GET'])
 def init():
@@ -144,8 +151,12 @@ def picture():
                 if(typeUser=="1"): #Artist
                     conexion = conecta_db("DESart.db")
                     response = modifica_art(conexion,hashname)
-                    close_db(conexion)
                     watermark(app.config["UPLOAD_FOLDER"],hashname,app.config["PREVIEW_FOLDER"])
+                    keyname = key_generation(app.config["KEY_FOLDER"],'key')
+                    registra_keySinFirma(conexion,keyname,hashname)
+                    encrypt_AES(app.config["KEY_FOLDER"],keyname,app.config["UPLOAD_FOLDER"],hashname,app.config["CIPHER_FOLDER"])
+                    decrypt_AES(app.config["KEY_FOLDER"],keyname,app.config["CIPHER_FOLDER"],hashname,app.config["DECIPHER_FOLDER"])
+                    close_db(conexion)
                     return response
                 if(typeUser=="2"): #Client
                     pass
