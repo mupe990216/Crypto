@@ -58,9 +58,9 @@ def decrypt_AES(pathkey,keyName,pathOld,imgName,pathNew):
     pFile.write(plaintext)
     pFile.close()
     # Verify hash img
-    hash_img(pathNew,imgName)
+    hash_img_test(pathNew,imgName)
 
-def hash_img(path,filename):
+def hash_img_test(path,filename):
     oldPath = path+"\\"+filename
     file = open(oldPath,"rb")
     fileHash = hashlib.sha256(file.read()).hexdigest()

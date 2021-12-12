@@ -11,6 +11,7 @@ def watermark(oldPath, filename, newPath):
     img.save(newPath+"\\"+filename)
     file = open(newPath+"\\"+filename,"rb")
     print(hashlib.sha256(file.read()).hexdigest())
+    file.close()
 
 
 # Esta funcion copia el archivo que se acaba de subir con su nombre cambiado por el hash de este mismo
@@ -20,6 +21,7 @@ def hash_img(path,filename):
     fileHash = hashlib.sha256(file.read()).hexdigest()
     formatImg = filename.rsplit(".", 1)[1].lower()
     newPath = path+"\\"+fileHash+"."+formatImg
+    file.close()
     shutil.copyfile(oldPath, newPath)
     return fileHash+"."+formatImg
 
