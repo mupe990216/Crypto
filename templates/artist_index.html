@@ -1,6 +1,20 @@
 {% extends "base_artist.html" %}
 
 {% block contenido %}
+{% if opc == 3 %}
+<div class="row">
+    <nav>
+        <div class="nav-wrapper grey darken-2">
+            <div class="col s12" style="text-align: center;">
+                <a href="/sign" class="rutaNavega">Sign image file</a>
+                <i class="zmdi zmdi-chevron-right rutaNavega" style="display: inline-block;"></i>
+                <a href="#" class="rutaNavegaFinal">Terms and conditions</a>
+            </div>
+        </div>
+    </nav>
+</div>
+{% endif %}
+
 <div class="row">
     <article class="col s12 center-align">
 
@@ -11,6 +25,9 @@
         </p>
         {% endif %}
 
+
+
+        <!-- Upload image file -->
         {% if opc == 1 %}
         <br>
         <h2 class="center-align">Upload image file</h2>
@@ -35,6 +52,14 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="input-field col m12 l6 offset-l3">
+                            <i class="zmdi zmdi-format-size prefix"></i>
+                            <input id="title" name="title" type="text" class="validate" length="32" maxlength="32"
+                                minlength="1" required style="font-size: 24px;">
+                            <label for="title">Title</label>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="input-field col m6 offset-m3 l6 offset-l3">
                             <button onclick="sendImage()" type="button" class="btn-large waves-effect waves-light">
                                 Send&nbsp;&nbsp;<i class="zmdi zmdi-mail-send"></i>
@@ -45,6 +70,132 @@
             </div>
         </div><br><br>
         {% endif %}
+        <!-- Upload image file -->
+
+
+
+        <!-- view image file -->
+        {% if opc == 2 %}
+        <br>
+        <h2 class="center-align">Sign image file</h2>
+        <h4>Images to sign: {{table|length}} </h4><br>
+
+        {% if (table|length) == 0 %}
+        <br>
+        <h4>You don't have images to sign</h4><br><br><br>
+        {% else %}
+        <div class="container center-align" style="margin-bottom: 15%;">
+            <div class="row">
+                {% for row in table %}
+                <div class="col m12 l4">
+                    <div class="card grey darken-2 center-box">
+                        <form method="POST" action="/sign">
+                            <div class="card-image">
+                                <img class="materialboxed hola1" src="{{url_for('static',filename='uploads/'+row[0])}}">
+                                <input type="hidden" id="hashname" name="hashname" value="{{row[0]}}">
+                            </div>
+                            <div class="card-content white-text">
+                                <p class="TituloPostal" style="text-align: center;">{{row[4]}}</p>
+                                <p>Author: {{row[2]}}</p>
+                                <p>Date: {{row[5]}}</p>
+                            </div>
+                            <div class="card-action">
+                                <button type="submit" class="btn orange darken-2 waves-effect waves-light BotonPostal">
+                                    Sign <i class="zmdi zmdi-long-arrow-tab"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        <!-- view image file -->
+
+
+
+        <!-- Sign image file -->
+        {% if opc == 3 %}
+        <h2 class="center-align">Terms and conditions</h2>
+        <div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
+            <div class="row">
+                <h4>Are you sure to sign your art?</h4>
+                <form class="col s12" method="POST" action="/picture">
+                    <div class="row">
+                        <h5>Title: {{table[4]}}</h5>
+                    </div>
+                    <div class="row">
+                        <div class="contenedor_slider">
+                            <div class="slider" id="slider">
+                                <div class="slider_section">
+                                    <img src="{{url_for('static',filename='uploads/'+table[0])}}" class="slider_img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5>Author: {{table[2]}}</h5>
+                        <h5>Date: {{table[5]}}</h5>
+                    </div><br>
+                    <div class="row">
+                        <input type="checkbox" class="filled-in" id="terms" name="terms" />
+                        <label class="btn_terms" for="terms" style="color: rgb(100, 70, 70); font-size: 24px;">I accept
+                            the terms and conditions</label>
+                    </div>
+                    <div class="row">
+                        <a href="#" style="color: rgb(61, 62, 112); font-size: 18px; text-decoration: underline;">Read
+                            terms and conditions</a>
+                        <input type="hidden" name="hashname" id="hashname" value="{{table[0]}}">
+                        <input type="hidden" name="user" id="user" value="{{table[1]}}">
+                        <input type="hidden" name="typeUser" id="typeUser" value="{{typeUser}}">
+                    </div>
+                    <div class="row">
+                        <div class="input-field col m6 offset-m3 l6 offset-l3">
+                            <button onclick="signArt()" type="button" class="btn-large waves-effect waves-light">
+                                Sign&nbsp;&nbsp;<i class="zmdi zmdi-border-color"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><br><br>
+        {% endif %}
+        <!-- Sign image file -->
+
+
+
+        <!-- Public Art -->
+        {% if opc == 4 %}
+        <br>
+        <h2 class="center-align">Public Art</h2>
+        {% if (table|length) == 0 %}
+        <br>
+        <h4>There is not public art to view</h4><br><br><br>
+        {% else %}
+        <div class="container center-align" style="margin-bottom: 15%;">
+            <div class="row">
+                {% for row in table %}
+                <div class="col m12 l4">
+                    <div class="card grey darken-2 center-box">
+                            <div class="card-image">
+                                <img class="materialboxed hola1" src="{{url_for('static',filename='preview/'+row[0])}}">
+                                <input type="hidden" id="hashname" name="hashname" value="{{row[0]}}">
+                            </div>
+                            <div class="card-content white-text">
+                                <p class="TituloPostal" style="text-align: center;">{{row[4]}}</p>
+                                <p>Author: {{row[2]}}</p>
+                                <p>Date: {{row[5]}}</p>
+                            </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        <!-- Public Art -->
+
 
     </article>
 </div>

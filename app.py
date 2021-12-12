@@ -3,9 +3,9 @@ from Script.BD.database import *
 from Script.PIC.pictures import *
 from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
 from werkzeug.utils import secure_filename
-ART_FOLDER = os.path.abspath("./arts/")
-UPLOAD_FOLDER = os.path.abspath("./uploads/")
-PREVIEW_FOLDER = os.path.abspath("./preview/")
+ART_FOLDER = os.path.abspath("./static/arts/")
+UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
+PREVIEW_FOLDER = os.path.abspath("./static/preview/")
 
 app = Flask(__name__, static_folder='static',template_folder='templates')
 app.config['SECRET_KEY'] = '12345678'
@@ -70,7 +70,7 @@ def menu():
         else:
             return redirect(url_for("init"))
     except Exception as e:
-        print("\n {} \n".format(e))
+        print("\n *** Exception menu: {} \n".format(e))
         return redirect(url_for("init"))
 
 @app.route('/upload',methods=['GET','POST'])
@@ -83,6 +83,7 @@ def upload():
                 if not "imageFile" in request.files:
                     return "No file part in the form."
                 file = request.files["imageFile"]
+                title = json.loads(request.form["title"])['title']
                 filename = file.filename
                 if(filename==""):
                     return "Select a valid file"
@@ -93,18 +94,83 @@ def upload():
                     hashName = hash_img(path,filename)
                     rm_img(path,filename)
                     conexion = conecta_db("DESart.db")
-                    response = registra_art(conexion,hashName,session["user"],session["email"])
+                    response = registra_art(conexion,hashName,session["user"],session["email"],title)
                     close_db(conexion)
                     return response
         else:
             return redirect(url_for("init"))
     except Exception as e:
-        print("\n {} \n".format(e))
+        print("\n *** Exception upload: {} \n".format(e))
         return redirect(url_for("init"))
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg"])
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/sign',methods=['GET','POST'])
+def sign():
+    try:
+        if session["user"]!=None:
+            if request.method == 'GET':
+                conexion = conecta_db("DESart.db")
+                response = consulta_art_sinFirma(conexion,session["user"]).fetchall()
+                close_db(conexion)
+                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2,table=response)
+            else:
+                if not "hashname" in request.form:
+                    return redirect(url_for("sign"))
+                else:
+                    hashname = request.form['hashname']
+                    conexion = conecta_db("DESart.db")
+                    response = consulta_art_especifica(conexion,hashname).fetchone()
+                    close_db(conexion)
+                    return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=3,table=response)
+        else:
+            return redirect(url_for("init"))
+    except Exception as e:
+        print("\n *** Exception sign: {} \n".format(e))
+        return redirect(url_for("init"))
+
+@app.route('/picture',methods=['POST'])
+def picture():
+    try:
+        if session["user"]!=None:
+            if not "hashname" in request.form:
+                return redirect(url_for("sign"))
+            else:
+                hashname = request.form['hashname']
+                typeUser = request.form['typeUser']
+                user = request.form['user']
+                if(typeUser=="1"): #Artist
+                    conexion = conecta_db("DESart.db")
+                    response = modifica_art(conexion,hashname)
+                    close_db(conexion)
+                    watermark(app.config["UPLOAD_FOLDER"],hashname,app.config["PREVIEW_FOLDER"])
+                    return response
+                if(typeUser=="2"): #Client
+                    pass
+                return "Imagen firmada y cifrada"
+        else:
+            return redirect(url_for("init"))
+    except Exception as e:
+        print("\n *** Exception picture: {} \n".format(e))
+        return redirect(url_for("init"))
+
+@app.route('/artPublic',methods=['GET'])
+def public():
+    try:
+        if session["user"]!=None:
+            if session["typeUser"]==1: #Artist
+                conexion = conecta_db("DESart.db")
+                response = consulta_art_conFirma(conexion,session["user"]).fetchall()
+                close_db(conexion)
+                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=4,table=response)
+        else:
+            return redirect(url_for("init"))
+    except Exception as e:
+        print("\n *** Exception public: {} \n".format(e))
+        return redirect(url_for("init"))
+
 
 def init_db():
     conexion = conecta_db("DESart.db")

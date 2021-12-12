@@ -33,7 +33,8 @@ function validarExt() {
  */
 function sendImage() {
     let imgFile = document.getElementById('imageFile');
-    if (imgFile.value != "") {
+    let title = document.getElementById('title').value;
+    if ( (imgFile.value != "") && (title != "")) {
         swal({
             title: "Are you sure?",
             text: "This image will be uploaded",
@@ -43,9 +44,12 @@ function sendImage() {
             showLoaderOnConfirm: true
         },
             function () {
-                let formData = new FormData();
-                let imageFile = $('#imageFile')[0].files[0];
-                formData.append('imageFile', imageFile);
+                let formData = new FormData(); // Objeto donde se enviara toda la info
+                let imageFile = $('#imageFile')[0].files[0]; // Se extra la imagen a mandar
+                formData.append('imageFile', imageFile); //Se agrega al objeto
+                let dataJson = new Object(); //Se crea un objeto para guardar el texto 
+                dataJson.title = title; //Se asigan los valores a cada key
+                formData.append('title', JSON.stringify(dataJson)); //Se serializa el objeto texto con el de imagen
                 $.ajax({
                     type: "POST",
                     url: "/upload",
@@ -61,7 +65,7 @@ function sendImage() {
                                 type: "success"
                             },
                                 function () {
-                                    setTimeout(function () { location.href = "/upload"; }, 200);//Esperamos 0.2s para recargar la pagina
+                                    setTimeout(function () { location.href = "/sign"; }, 200);//Esperamos 0.2s para recargar la pagina
                                 });
                         } else {
                             swal({
@@ -76,6 +80,61 @@ function sendImage() {
             }
         );
     } else {
-        swal("Filed empty", "Select an image", "error");
+        swal("Filed empty", "Select an image and write a title", "error");
     }
+}
+
+/**
+ * Esta funcion manda los datos para firmar la imagen en la ruta /picture
+ */
+function signArt() {
+    if (document.getElementById("terms").checked) {
+        swal({
+            title: "Are you sure?",
+            text: "This image will be signed",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        },
+            function () {
+                let hashname = document.getElementById("hashname").value;
+                let typeUser = document.getElementById("typeUser").value;
+                let user = document.getElementById("user").value;
+                $.ajax({
+                    type: "POST",
+                    url: "/picture",
+                    data: {
+                        hashname: hashname,
+                        typeUser: typeUser,
+                        user: user
+                    },
+                    cache: false,
+                    success: function (response) {
+                        if (response == "Art signed successful") {
+                            swal({
+                                title: "Process successful",
+                                text: response,
+                                type: "success"
+                            },
+                                function () {
+                                    setTimeout(function () { location.href = "/artPublic"; }, 200);//Esperamos 0.2s para recargar la pagina
+                                });
+                        } else {
+                            swal({
+                                title: "Something went wrong",
+                                text: response,
+                                type: "error"
+                            });
+                        }
+                    },
+                    error: function (response) { swal("Server Error", response); }
+                })
+            }
+        );
+    } else {
+        swal("Wait!", "You have to read our terms and conditions", "warning");
+    }
+    // let terms = document.getElementById("terms");
+    // swal(terms);
 }

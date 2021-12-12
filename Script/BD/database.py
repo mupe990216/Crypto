@@ -46,6 +46,7 @@ def crea_tbs(conexion):
 					usr text not null,
 					email text not null,
                     statusFirma text not null,
+                    titulo text not null,
 					fecha timestamp default current_timestamp,
                     foreign key(usr) references credenciales(usr),
 					foreign key(email) references persona(email)
@@ -195,18 +196,43 @@ def valida_art(conexion,art):
         mensaje = "Sin existencia"
     return mensaje
 
-def registra_art(conexion,art,user,email):
+def registra_art(conexion,art,user,email,titulo):
     mensaje = ""
     cursor_tb = conexion.cursor()
     msj = valida_art(conexion,art)
     if(msj=="Arte existente"):
-        mensaje = "There is an similar art in the system"
+        mensaje = "There is a similar art in the system"
     else:
-        sentencia = "insert into artes(hashname,usr,email,statusFirma) values(?,?,?,?)"
-        cursor_tb.execute(sentencia,(art,user,email,'No'))
+        sentencia = "insert into artes(hashname,usr,email,statusFirma,titulo) values(?,?,?,?,?)"
+        cursor_tb.execute(sentencia,(art,user,email,'No',titulo))
         conexion.commit()
         mensaje = "Art stored"
     return mensaje
+
+def consulta_art_sinFirma(conexion,user):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from artes where usr='{}' and statusFirma='No' order by fecha desc".format(user)
+    respuesta = cursor_tb.execute(sentencia)
+    return respuesta
+
+def consulta_art_conFirma(conexion,user):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from artes where usr='{}' and statusFirma='Si' order by fecha desc".format(user)
+    respuesta = cursor_tb.execute(sentencia)
+    return respuesta
+
+def consulta_art_especifica(conexion,art):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from artes where hashname='{}'".format(art)
+    respuesta = cursor_tb.execute(sentencia)
+    return respuesta
+
+def modifica_art(conexion,art):
+    cursor_tb = conexion.cursor()
+    sentencia = "update artes set statusFirma='Si' where hashname='{}'".format(art)
+    cursor_tb.execute(sentencia)
+    conexion.commit()
+    return "Art signed successful"
 
 # Test section
 # conexion = conecta_db("DESart.db")
@@ -214,4 +240,6 @@ def registra_art(conexion,art,user,email):
 # info = {'usur': 'elias160299', 'pswd': '12345678', 'name': 'Elias', 'ape1': 'Muñoz', 'ape2': 'Primero', 'age': '22', 'gend': '2', 'uTyp': '3', 'email': 'elias160299@hotmail.com'}
 # alta_usr(conexion,info)
 # consulta_nombre(conexion,'75b3978b7f22dfd20f713d00f8fb2658542c5c4752e163ba21a4e375177a7269')
+# print(consulta_art_especifica(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png').fetchone())
+# print(modifica_art(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png'))
 # close_db(conexion)

@@ -1,30 +1,16 @@
 import os, hashlib, shutil
 from PIL import Image,ImageDraw,ImageFont
 
-def watermark(filename, text,pic):
-    # Crea una instancia del objeto de imagen
-    img = Image.open(filename)
-    w, h = img.size  # Obtenga el ancho y el alto de la imagen para calcular la posición relativa de la imagen
-    print(pic+"Altura de la imagen:",h)
-    print(pic+"Ancho de la imagen:",w)
-    print("==========================================")
-    # Establecer fuente, tamaño de fuente
-    font = ImageFont.truetype("calibri.ttf", int(w/5))  
+# Esta funcion crea una copia de la original que se usara para su previsualziacion con marca de agua
+def watermark(oldPath, filename, newPath):
+    img = Image.open(oldPath+"\\"+filename)
+    w, h = img.size
+    font = ImageFont.truetype("calibri.ttf", int(w/5))
     draw = ImageDraw.Draw(img)
-    '''
-           Los cuatro ajustes de parámetros de draw.text: posición del texto (abscisas, ordenadas) / contenido / color / fuente
-           El primer parámetro ajusta la posición relativa de la inserción de texto (la dirección del eje de coordenadas de la pantalla es la siguiente)
-                   →w
-                  ↓
-                   h
-     '''
-    # draw.text((w/6,h/1.2), text=text, fill=(255, 255, 255), font=font)
-    draw.text((w/20,h/3), text=text, fill=(255, 255, 255), font=font)
-    # Crear si la siguiente carpeta no existe
-    if not os.path.exists("marked_images"):
-        os.mkdir("marked_images")
-    save_name=pic.split(".")[0]+"_marked.jpg"#Establezca el nombre de la imagen después de agregar la marca de agua
-    img.save("./marked_images/"+save_name)
+    draw.text((w/50,h/50), text='©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art', fill=(205, 205, 205), font=font)
+    img.save(newPath+"\\"+filename)
+    file = open(newPath+"\\"+filename,"rb")
+    print(hashlib.sha256(file.read()).hexdigest())
 
 
 # Esta funcion copia el archivo que se acaba de subir con su nombre cambiado por el hash de este mismo
