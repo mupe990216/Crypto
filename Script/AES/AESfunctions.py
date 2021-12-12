@@ -5,7 +5,7 @@ from Crypto.Util.Padding import pad, unpad
 
 def key_generation(path,name):
     oldPath = path+"\\"+name
-    key = get_random_bytes(16)
+    key = get_random_bytes(16) # Size 128 bits
     fileBase64 = base64.b64encode(key)
     with open(oldPath,"wb") as kFile:
         kFile.write(fileBase64)
