@@ -21,7 +21,7 @@ class RSA_sign:
     '''
     def generate_key(self, key_size, file_name):
         '''Generate: 1024 or 2048 or 3072'''
-        self.private_key = RSA.generate(key_size)
+        self.private_key = RSA.generate(key_size) # We are using 2048
 
         '''private'''
         file = open(file_name + self.ext, 'wb')
