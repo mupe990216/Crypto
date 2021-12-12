@@ -37,10 +37,12 @@ class RSA_sign:
     def read_private_key(self, file_name):
         file = open(file_name + self.ext, 'r');
         self.private_key = RSA.import_key(file.read())
+        file.close()
 
     def read_public_key(self, file_name):
         file = open('public_' + file_name + self.ext, 'r');
         self.public_key = RSA.import_key(file.read())
+        file.close()
 
     '''
         Signing data with private key
@@ -70,9 +72,12 @@ class RSA_sign:
         # Always the last part will be the sign, others will be data
         for i in range(len(parts) - 1):
             data += parts[i]
+            if(i != len(parts) - 2):
+                data += self.separator
         sign = parts[len(parts)-1]
 
-        sign = binascii.unhexlify(sign)        data_hash = SHA256.new(data.encode('utf-8'))
+        sign = binascii.unhexlify(sign)
+        data_hash = SHA256.new(data.encode('utf-8'))
         verification = PKCS115_SigScheme(self.public_key)
         try:
             verification.verify(data_hash, sign)
@@ -108,13 +113,21 @@ txt.close()
 signed_file_aux.close()
 
 # Second Person
-'''  
+print('\nSecond Person')
 rsa2 = RSA_sign()
 rsa2.generate_key(2048, 'my_key2')
+
+print('Read keys')
+rsa.read_private_key('my_key2')
+rsa.read_public_key('my_key2')
+
+print('Read text')
+txt = open('contract_' + 'myContract' + ".txt", 'rb') # read bytes
+txt_bytes = txt.read()
+
 print('Firmando 2')
-rsa2.signing_data(b'Hello World', 'myContract_2')
+rsa2.signing_data(txt_bytes, 'myContract_2')
 
 print('Verificando');
-signed_file_aux = open('contract_' + 'myContract' + ".sign")
-rsa.verify_signature(b'Hello World', signed_file_aux.read())
-'''
+signed_file_aux = open('contract_' + 'myContract_2' + ".txt")
+rsa.verify_signature(signed_file_aux.read())
