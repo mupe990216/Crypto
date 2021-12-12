@@ -1,0 +1,61 @@
+.login{
+    background-image: url('../img/inicio/01.jpg'); 
+    background-size: 100% 100%;  /* Tamaño del Fondo */
+	background-repeat: no-repeat;  /* Nada de Repeticiones ni Mosaicos */
+    min-height: 600px;
+}
+
+.login form{
+	width: 300px;
+    background-color: rgba(50,50,50,0.7);
+    padding: 40px;
+    border: 1px solid rgba(0,0,0,0.2);
+	margin: auto;
+}
+
+.login form h2{
+    font-size: 50x;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.login #usuario:hover , #clave:hover , #UserService:hover{
+    transform: scale(1.05);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    color: yellow;
+}
+
+.link{
+    font-size: 20px;
+    color: rgb(170,225,80);
+}
+
+.link:hover {
+    transform: scale(1.05);
+    color: yellow;
+}
+
+@media(min-width:768px){
+    .login form{
+        width: 400px;
+		margin-top: 50px;
+    }
+    .login form h2{
+        margin: 0px;
+        font-size: 54px;
+        margin-bottom: 20px;
+    }
+}
+
+@media(min-width:1024px){
+    .login form{
+        width: 450px;
+		margin-top: 10px;
+    }
+    .login form h2{
+        margin: 0px;
+        font-size: 58px;
+        margin-bottom: 20px;
+    }
+}

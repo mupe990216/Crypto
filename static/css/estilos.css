@@ -1,0 +1,61 @@
+body{
+    background-color: rgb(97,97,97);
+}
+
+.seccion{
+    background-color: rgb(160,160,160);
+}
+
+.seccion h2{
+    color: rgb(150,35,95);
+    font-size: 52px; 
+}
+
+.seccion p{
+    font-size: 26px; 
+    text-align: justify;
+    color: rgb(80,40,70);
+}
+
+
+@media(min-width:1024px){
+    .seccion p{
+        font-size: 23px; 
+    }
+}
+
+#mapita{
+	width: 72%;
+	height: 450px;
+}
+
+::-webkit-scrollbar {
+  width: 13px;
+  height: 13px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #202020;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #232323;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #232323;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-track:hover {
+  background: transparent;
+}
+::-webkit-scrollbar-track:active {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

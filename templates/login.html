@@ -1,0 +1,39 @@
+{% extends "base_init.html" %}
+{% block title %}.: Login :.{% endblock %}
+
+{% block contenido %}
+<!-- CONTENIDO -->
+<div class="row">
+    <!-- Timeline -->
+    <article class="col s12" style="margin-top: 12%; margin-bottom: 12%;">
+        <div style="background-color: rgba(50, 50, 50, 0.5); padding: 5%; border-radius: 25px;"
+            class="col l4 s8 offset-l4 offset-s2 center-align">
+            <h3>Log in</h3><br>
+            <form action="/login" method="POST">
+                <div class="input-field">
+                    <i class="zmdi zmdi-account prefix"></i>
+                    <input id="nickname" name="nickname" type="text" class="validate" length="32" maxlength="32"
+                        minlength="3" required>
+                    <label for="nickname">Nickname</label>
+                </div>
+                <div class="input-field">
+                    <i class="zmdi zmdi-lock-outline prefix"></i>
+                    <input id="pswd" name="pswd" type="password" class="validate" length="64" maxlength="64"
+                        minlength="8" required>
+                    <label for="pswd">Password</label>
+                </div><br>
+            </form>
+            <button type="button" class="btn-large waves-effect waves-light" onclick="login();">Sign in&nbsp;&nbsp;<i
+                    class="zmdi zmdi-mail-send"></i></button>
+            <br><br>
+            <a class="btn grey" href="/registration">Sign up</a>
+        </div>
+
+    </article>
+</div>
+<!-- CONTENIDO -->
+{% endblock %}
+
+{% block finalJS %}
+<script src="{{ url_for('static',filename='js/index.js') }}"></script>
+{% endblock %}
