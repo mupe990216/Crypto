@@ -1,0 +1,115 @@
+{% extends "base_init.html" %}
+{% block title %}.: Register :.{% endblock %}
+
+{% block contenido %}
+<!-- CONTENIDO -->
+<div class="row">
+    <nav>
+        <div class="nav-wrapper grey darken-2">
+            <div class="col s12" style="text-align: center;">
+                <a href="/" class="rutaNavega">Login</a>
+                <i class="zmdi zmdi-chevron-right rutaNavega" style="display: inline-block;"></i>
+                <a href="#" class="rutaNavegaFinal">Create Your Count</a>
+            </div>
+        </div>
+    </nav>
+</div><br>
+
+<h2 class="center-align">Create Your Count</h2>
+<!-- <h2 class="center-align">Modificar Perfil</h2><hr> -->
+<div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
+    <div class="row">
+        <form class="col s12" id="RegUsr" name="RegUsr" method="POST" action=""><br>
+            <div class="row">
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-account-circle prefix"></i>
+                    <input id="usur" name="usur" type="text" class="validate" length="64" maxlength="64" minlength="8"
+                        required>
+                    <label for="usur">Nickname</label>
+                </div>
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-lock-outline prefix"></i>
+                    <input id="pswd1" name="pswd1" type="password" class="validate" length="64" maxlength="64"
+                        minlength="8" required>
+                    <label for="pswd1">Password</label>
+                </div>
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-lock-outline prefix"></i>
+                    <input id="pswd2" name="pswd2" type="password" class="validate" length="64" maxlength="64"
+                        minlength="8" required>
+                    <label for="pswd2">Confirm Password</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-account prefix"></i>
+                    <input id="nombre" name="nombre" type="text" class="validate" length="32" maxlength="32"
+                        minlength="3" required>
+                    <label for="nombre">Name</label>
+                </div>
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-account-o prefix"></i>
+                    <input id="ape1" name="ape1" type="text" class="validate" length="32" maxlength="32" minlength="3"
+                        required>
+                    <label for="ape1">Surname</label>
+                </div>
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-account-o prefix"></i>
+                    <input id="ape2" name="ape2" type="text" class="validate" length="32" maxlength="32" minlength="3"
+                        required>
+                    <label for="ape2">Second surname</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col m8 offset-m2 l4">
+                    <i class="zmdi zmdi-time prefix"></i>
+                    <input id="edad" name="edad" type="number" step="1" min="18" max="99" class="validate" length="2"
+                        maxlength="2" required>
+                    <label for="edad">Age</label>
+                </div>
+                <div class="input-field col m8 offset-m2 l4">
+                    <select id="genero" name="genero" class="icons" required>
+                        <option value="-1" selected disabled>Select a gender -></option>
+                        <option value="1" data-icon="{{ url_for('static',filename='img/01Fem.png') }}" class="circle">
+                            Female</option>
+                        <option value="2" data-icon="{{ url_for('static',filename='img/02Mas.png') }}" class="circle">
+                            Male</option>
+                        <option value="3" data-icon="{{ url_for('static',filename='img/03Otr.png') }}" class="circle">
+                            Other</option>
+                    </select>
+                    <label>Gender</label>
+                </div>
+                <div class="input-field col m8 offset-m2 l4">
+                    <select id="userType" name="userType" required>
+                        <option value="-1" selected disabled>Select a type of user -></option>
+                        <option value="1">Artist</option>
+                        <option value="2">Client</option>
+                        <option value="3">Public Notary</option>
+                    </select>
+                    <label>User Type</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col m8 offset-m2 l12">
+                    <i class="zmdi zmdi-email prefix"></i>
+                    <input id="correo" name="correo" type="email" class="validate" length="128" maxlength="128"
+                        minlength="6" required>
+                    <label for="correo">Email</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col m5 offset-m4 l5 offset-l5">
+                    <button type="button" class="btn-large waves-effect waves-light" name="enviar" 
+                        id="enviar" onclick="register();">Send&nbsp;&nbsp;<i class="zmdi zmdi-mail-send"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><br><br>
+<!-- CONTENIDO -->
+{% endblock %}
+
+{% block finalJS %}
+<script src="{{ url_for('static',filename='js/index.js') }}"></script>
+{% endblock %}
