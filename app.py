@@ -1,12 +1,17 @@
 import json, os
 from Script.BD.database import *
+from Script.PIC.pictures import *
 from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
 from werkzeug.utils import secure_filename
+ART_FOLDER = os.path.abspath("./arts/")
 UPLOAD_FOLDER = os.path.abspath("./uploads/")
+PREVIEW_FOLDER = os.path.abspath("./preview/")
 
 app = Flask(__name__, static_folder='static',template_folder='templates')
 app.config['SECRET_KEY'] = '12345678'
+app.config["ART_FOLDER"] = ART_FOLDER
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["PREVIEW_FOLDER"] = PREVIEW_FOLDER
 
 @app.route('/',methods=['GET'])
 def init():
@@ -16,13 +21,13 @@ def init():
 @app.route('/login',methods=['POST'])
 def login():
     dataJson = json.loads(request.form['dataJson'])
-    print(dataJson)
     credentials = hash_credentials(dataJson)
     conexion = conecta_db("DESart.db")
     response = valida_login(conexion,credentials[0],credentials[1])
     if(response == "Welcome!"):
         session["user"] = credentials[0]
         session["pswd"] = credentials[1]
+        session["email"] = consulta_email(conexion,session["user"])
     else:
         session.clear()
     close_db(conexion)
@@ -84,8 +89,13 @@ def upload():
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     file.save(os.path.join(app.config["UPLOAD_FOLDER"],filename))
-                return "Ok"
-                # return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
+                    path = app.config["UPLOAD_FOLDER"]
+                    hashName = hash_img(path,filename)
+                    rm_img(path,filename)
+                    conexion = conecta_db("DESart.db")
+                    response = registra_art(conexion,hashName,session["user"],session["email"])
+                    close_db(conexion)
+                    return response
         else:
             return redirect(url_for("init"))
     except Exception as e:

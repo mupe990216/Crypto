@@ -41,11 +41,13 @@ def crea_tbs(conexion):
 		)
 	cursor_tb.execute(
 			"""
-				create table if not exists rep_sistema(
-					idRepor integer not null primary key,
-					Actividad text not null,
+				create table if not exists artes(
+					hashname text not null primary key,
+					usr text not null,
 					email text not null,
+                    statusFirma text not null,
 					fecha timestamp default current_timestamp,
+                    foreign key(usr) references credenciales(usr),
 					foreign key(email) references persona(email)
 				)
 			"""
@@ -81,8 +83,7 @@ def clearDict(dicInfo):
     return result
 
 def hash_credentials(dicInfo):
-    result = list()    
-    print(dicInfo)
+    result = list()
     user = hashlib.sha256(dicInfo['usur'].encode()).hexdigest()
     result.append(user)
     pswd = hashlib.sha256(dicInfo['pswd'].encode()).hexdigest()
@@ -143,6 +144,16 @@ def alta_usr(conexion,dicInfo):
             mensaje = "Registration successful!"
     return mensaje
 
+def consulta_email(conexion,user):
+    cursor_tb = conexion.cursor()
+    sentencia = "select email from persona where usr='{}'".format(user)
+    respuesta = cursor_tb.execute(sentencia).fetchone()
+    if(respuesta==None):
+        respuesta = "Not found";
+        return respuesta
+    else:
+        return respuesta[0]
+
 def consulta_nombre(conexion,user):
     cursor_tb = conexion.cursor()
     sentencia = "select nom from persona where usr='{}'".format(user)
@@ -172,6 +183,30 @@ def consulta_genero(conexion,user):
         return respuesta
     else:
         return respuesta[0]
+
+def valida_art(conexion,art):
+    mensaje = ""
+    cursor_tb = conexion.cursor()
+    sentencia = "select count(*) from artes where hashname='{}'".format(art)
+    respuesta = cursor_tb.execute(sentencia).fetchone()[0]
+    if(respuesta != 0):
+        mensaje = "Arte existente"
+    else:
+        mensaje = "Sin existencia"
+    return mensaje
+
+def registra_art(conexion,art,user,email):
+    mensaje = ""
+    cursor_tb = conexion.cursor()
+    msj = valida_art(conexion,art)
+    if(msj=="Arte existente"):
+        mensaje = "There is an similar art in the system"
+    else:
+        sentencia = "insert into artes(hashname,usr,email,statusFirma) values(?,?,?,?)"
+        cursor_tb.execute(sentencia,(art,user,email,'No'))
+        conexion.commit()
+        mensaje = "Art stored"
+    return mensaje
 
 # Test section
 # conexion = conecta_db("DESart.db")

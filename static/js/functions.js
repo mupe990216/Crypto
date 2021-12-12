@@ -54,14 +54,14 @@ function sendImage() {
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        if (response == "Ok") {
+                        if (response == "Art stored") {
                             swal({
                                 title: "Stored successful",
                                 text: response,
                                 type: "success"
                             },
                                 function () {
-                                    setTimeout(function () { location.href = "/upload"; }, 350);//Esperamos 0.35s para recargar la pagina
+                                    setTimeout(function () { location.href = "/upload"; }, 200);//Esperamos 0.2s para recargar la pagina
                                 });
                         } else {
                             swal({

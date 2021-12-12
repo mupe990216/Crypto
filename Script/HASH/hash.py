@@ -1,8 +1,6 @@
 import hashlib
 
-file = open("text.txt","rb")
+file = open("13.jpg","rb")
 fileHash = hashlib.sha256(file.read()).hexdigest()
 print(fileHash)
-print(len(fileHash)*4)
-
 
