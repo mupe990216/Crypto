@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -59,21 +60,37 @@
                 <img src="{{ url_for('static',filename='img/logo.png') }}" alt="material-logo"
                     class="responsive-img center-box">
                 <figcaption class="center-align" style="padding: 1%;">Cryptography - 3CM15</figcaption>
+                <figcaption class="center-align" style="padding: 1%; color: bisque;">
+                    {%if typeUser == 1%}
+                        Artist
+                    {%endif%}
+                    {%if typeUser == 2%}
+                        Client
+                    {%endif%}
+                    {%if typeUser == 3%}
+                        Public Notary
+                    {%endif%}
+                </figcaption>
             </figure>
+            {% block NavLateral %}{% endblock %}
 
         </div>
 
     </section>
+    <!-- Nav Lateral -->
 
     <!-- Page content -->
-
     <section class="ContentPage full-width">
 
         <!-- Area de Campanita de Notificaciones -->
         <div class="ContentPage-Nav full-width">
-
+            {% block CampanitaNotificaciones %}{% endblock %}
         </div>
         <!-- Termina Area de Campanita -->
+
+        <!-- Area de Mensajes que Llegan -->
+        {% block mensajes %}{% endblock %}
+        <!-- Termina Area de Mensajes  -->
 
         <!-- CONTENIDO -->
         {% block contenido %}{% endblock %}

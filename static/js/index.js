@@ -6,7 +6,36 @@ function login() {
     } else if (pswd.value == "") {
         swal("Missing password", "", "error");
     } else {
-        swal("Great");
+        let dataJson = new Object();
+        dataJson.usur = nick.value;
+        dataJson.pswd = pswd.value;
+        $.ajax({
+            type: "POST",
+            url: "/login",
+            data: {
+                dataJson: JSON.stringify(dataJson)
+            },
+            cache: false,
+            success: function (response) {
+                if (response == "Welcome!") {
+                    swal({
+                        title: "Welcome! on this website",
+                        text: response,
+                        type: "success"
+                    },
+                        function () {
+                            setTimeout(function () { location.href = "/menu"; }, 350);//Esperamos 0.35s para recargar la pagina
+                        });
+                } else {
+                    swal({
+                        title: "Something went wrong",
+                        text: response,
+                        type: "error"
+                    });
+                }
+            },
+            error: function (response) { swal("Server Error", response); }
+        })
     }
 }
 
@@ -99,14 +128,14 @@ function register() {
     if (enviar) {
         let dataJson = new Object();
         dataJson.usur = form.usur.value;
-        dataJson.pswd = form.pswd1.value
-        dataJson.name = form.nombre.value
-        dataJson.ape1 = form.ape1.value
-        dataJson.ape2 = form.ape2.value
-        dataJson.age = form.edad.value
-        dataJson.gend = form.genero.value
-        dataJson.uTyp = form.userType.value
-        dataJson.email = form.correo.value
+        dataJson.pswd = form.pswd1.value;
+        dataJson.name = form.nombre.value;
+        dataJson.ape1 = form.ape1.value;
+        dataJson.ape2 = form.ape2.value;
+        dataJson.age = form.edad.value;
+        dataJson.gend = form.genero.value;
+        dataJson.uTyp = form.userType.value;
+        dataJson.email = form.correo.value;
         swal({
             title: "Are you sure?",
             text: "Please wait",
@@ -124,14 +153,22 @@ function register() {
                     },
                     cache: false,
                     success: function (response) {
-                        swal({
-                            title: "Registration successful",
-                            text: response,
-                            type: "success"
-                        },
-                            function () {
-                                setTimeout(function () { location.href = "/"; }, 350);//Esperamos 0.35s para recargar la pagina
+                        if (response == "Registration successful!") {
+                            swal({
+                                title: "Registration successful",
+                                text: response,
+                                type: "success"
+                            },
+                                function () {
+                                    setTimeout(function () { location.href = "/"; }, 350);//Esperamos 0.35s para recargar la pagina
+                                });
+                        } else {
+                            swal({
+                                title: "Something went wrong",
+                                text: response,
+                                type: "error"
                             });
+                        }
                     },
                     error: function (response) { swal("Server Error", response); }
                 })

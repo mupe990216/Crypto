@@ -1,0 +1,62 @@
+{% extends "base_init.html" %}
+{% block title %}.: Artist :.{% endblock %}
+
+<!-- Nav Lateral -->
+{% block NavLateral %}
+<div class="NavLateral-Nav">
+
+    <ul class="full-width">
+
+        <li>
+            <a href="/upload" class="waves-effect waves-light">
+                <i class="zmdi zmdi-square-right"></i> Upload image file</a>
+        </li>
+        <li class="NavLateralDivider"></li>
+
+        <li>
+            <a href="/sign" class="waves-effect waves-light">
+                <i class="zmdi zmdi-border-color"></i> Sign image file</a>
+        </li>
+        <li class="NavLateralDivider"></li>
+
+        <li>
+            <a href="/contracts" class="waves-effect waves-light">
+                <i class="zmdi zmdi-file-text zmdi-hc-fw"></i> My contracts</a>
+        </li>
+        <li class="NavLateralDivider"></li>
+
+    </ul><br><br><br>
+
+</div>
+{% endblock %}
+<!-- Nav Lateral -->
+
+<!-- Area de Campanita de Notificaciones -->
+{% block CampanitaNotificaciones %}
+<ul class="full-width">
+
+    <li class="btn-MobileMenu ShowHideMenu"><a href="#" class="tooltipped waves-effect waves-light"
+            data-position="bottom" data-delay="50" data-tooltip="Menu"><i class="zmdi zmdi-menu"></i></a></li>
+
+    <a href="#" class="hola">
+        <li style="margin-top: 10px; margin-right: 10px;">
+            {%if gen == "1"%}
+            <figure><img src="{{ url_for('static',filename='img/01Fem.png') }}" alt="UserImage"></figure>
+            {%endif%}
+            {%if gen == "2"%}
+            <figure><img src="{{ url_for('static',filename='img/02Mas.png') }}" alt="UserImage"></figure>
+            {%endif%}
+            {%if gen == "3"%}
+            <figure><img src="{{ url_for('static',filename='img/03Otr.png') }}" alt="UserImage"></figure>
+            {%endif%}
+        </li>
+        <li class="hola" style="padding:0 5px; margin-top: 10px;">{{nombre}}</li>
+    </a>
+
+    <li style="margin-top: 10px; margin-right: 20px;"><a href="#"
+            class="tooltipped waves-effect waves-light btn-ExitSystem" data-position="bottom" data-delay="50"
+            data-tooltip="Cerrar Sesión"><i class="zmdi zmdi-power"></i></a></li>
+
+</ul>
+{% endblock %}
+<!-- Termina Area de Campanita -->

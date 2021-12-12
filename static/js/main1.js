@@ -57,65 +57,18 @@ $(document).ready(function(){
     $('.btn-ExitSystem').on('click', function(e){
         e.preventDefault();
         swal({ 
-            title: "¿Está seguro que deseas deslogearte?",   
-            text: "Está a punto de salir del sistema",   
+            title: "Do you want to get out?",   
+            text: "Your session will be closed",
             type: "warning",   
             showCancelButton: true,   
             confirmButtonColor: "#DD6B55",   
-            confirmButtonText: "Si, Estoy Seguro",
+            confirmButtonText: "Yes, sure",
             animation: "slide-from-top",   
             closeOnConfirm: false,
-            cancelButtonText: "Cancelar"
+            cancelButtonText: "Cancel"
         }, function(){
-            setTimeout(function(){ window.location='/login'; }, 200);
+            setTimeout(function(){ window.location='/'; }, 200);
         });
-    });
-
-    $('.btn-EliminarAdmin').on('click', function(e){
-        e.preventDefault();
-        swal({ 
-            title: "¿Estas Seguro que Deseas Deslogearte?",   
-            text: "Estas Apunto de Salir del Sistema",   
-            type: "warning",   
-            showCancelButton: true,   
-            confirmButtonColor: "#DD6B55",   
-            confirmButtonText: "Si, Estoy Seguro",
-            animation: "slide-from-top",   
-            closeOnConfirm: false,
-            cancelButtonText: "Cancelar"
-        }, function(){   
-            window.location='login.html'; 
-        });
-    }); 
-
-    $('.btn-Search').on('click', function(e){
-        e.preventDefault();
-        swal({   
-            title: "¿Qué Deseas Buscar?",   
-            text: "Escribe lo que deseas Buscar",   
-            type: "input",   
-            showCancelButton: true,   
-            closeOnConfirm: false,   
-            animation: "slide-from-top",   
-            inputPlaceholder: "Escribe Aqui",
-            confirmButtonText: "Buscar",
-            cancelButtonText: "Cancelar" 
-        }, function(inputValue){   
-            if (inputValue === false) return false;      
-            if (inputValue === "") {     swal.showInputError("Debes de Escribir algo");     
-            return false   
-            }      
-            swal("¡Bien!", "Buscaremos Informacion relacionada con: " + inputValue, "success"); 
-        });    
-    });
-
-    $('.btn-Notification').on('click', function(){
-        var NotificationArea=$('.NotificationArea');
-        if(NotificationArea.hasClass('NotificationArea-show')){
-            NotificationArea.removeClass('NotificationArea-show');
-        }else{
-            NotificationArea.addClass('NotificationArea-show');
-        }
     });
 
 });
