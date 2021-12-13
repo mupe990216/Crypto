@@ -168,7 +168,7 @@ class RSA_sign:
         data = ""
         # In case that found more separator
         # Always the last part will be the sign or signs, others parts will be data from the file
-        for i in range(len(parts) - 1):
+        for i in range(len(parts) - 1 - ignore):
             data += parts[i]
             if(i != len(parts) - 2 - ignore):
                 data += self.separator
@@ -222,7 +222,7 @@ image_64_encode = base64.encodebytes(img_bytes)
 print('Firmando')
 rsa.signing_data(image_64_encode, 'myContract', ext)
 
-print('Verificando');
+print('Verificando 1 - Firma del artista cuando nadie ha firmado');
 signed_file_aux = open('contract_' + 'myContract' + ext) # Name of the sign document
 signed = signed_file_aux.read()
 
@@ -250,9 +250,17 @@ img_bytes = img.read()
 print('Firmando 2')
 rsa2.signing_data(img_bytes, 'myContract_2', ext)
 
-print('Verificando');
+print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)');
 signed_file_aux = open('contract_' + 'myContract_2' + ext)
 rsa2.verify_signature(signed_file_aux.read())
 
 signed_file_aux.close()
 img.close()
+
+print('\nVerificando 3 - Firma del artista (cuando ya firmo el cliente)');
+signed_file_aux = open('contract_' + 'myContract_2' + ext) # Name of the sign document
+signed = signed_file_aux.read()
+
+rsa.verify_signature(signed, 1)
+
+signed_file_aux.close()
