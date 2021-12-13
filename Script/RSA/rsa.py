@@ -35,9 +35,11 @@ class RSA_sign:
     signing_data(data, file_name)
         This function generates a output file signed with the data provide.
         The output file have an extention '.txt'.
+        Note: Image bytes need to send in base64.
     signing_data(data, file_name, ext)
         This function generates a output file signed with the data provide.
         The output file have an extention provide in the variable 'ext'.
+        Note: Image bytes need to send in base64.
     verify_signature(signature, ignore)
         This function verify data of a signature, and the output will be if a signed file is valid.
     '''
@@ -106,6 +108,7 @@ class RSA_sign:
         This function generates a output file signed with the data provide.
         The output file have an extention '.txt'.
         Verify with private key.
+        Note: Image bytes need to send in base64.
 
         Parameters
         ----------
@@ -121,6 +124,7 @@ class RSA_sign:
         This function generates a output file signed with the data provide.
         The output file have an extention provide in the variable 'ext'.
         Verify with private key.
+        Note: Image bytes need to send in base64.
 
         Parameters
         ----------
