@@ -43,13 +43,13 @@ class RSA_sign:
     verify_signature(signature, ignore)
         This function verify data of a signature, and the output will be if a signed file is valid.
     '''
-    private_key = None;
-    public_key = None;
+    private_key = None
+    public_key = None
     ext = '.key'
     separator = '\n\n\\'
     
     def __init__(self):
-        print('Initialize');
+        print('Initialize')
         
     def generate_key(self, key_size, file_name):
         '''
@@ -86,7 +86,7 @@ class RSA_sign:
         file_name : str
             File name to read
         '''
-        file = open(file_name + self.ext, 'r');
+        file = open(file_name + self.ext, 'r')
         self.private_key = RSA.import_key(file.read())
         file.close()
 
@@ -99,7 +99,7 @@ class RSA_sign:
         file_name : str
             File name to read
         '''
-        file = open('public_' + file_name + self.ext, 'r');
+        file = open('public_' + file_name + self.ext, 'r')
         self.public_key = RSA.import_key(file.read())
         file.close()
 
@@ -210,7 +210,7 @@ class RSA_sign:
 '''
 ext = '.jpg'
 
-print('Generate keys');
+print('Generate keys')
 rsa = RSA_sign()
 rsa.generate_key(2048, 'my_key')
 
@@ -226,7 +226,7 @@ image_64_encode = base64.encodebytes(img_bytes)
 print('Firmando')
 rsa.signing_data(image_64_encode, 'myContract', ext)
 
-print('Verificando 1 - Firma del artista cuando nadie ha firmado');
+print('Verificando 1 - Firma del artista cuando nadie ha firmado')
 signed_file_aux = open('contract_' + 'myContract' + ext) # Name of the sign document
 signed = signed_file_aux.read()
 
@@ -254,14 +254,14 @@ img_bytes = img.read()
 print('Firmando 2')
 rsa2.signing_data(img_bytes, 'myContract_2', ext)
 
-print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)');
+print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)')
 signed_file_aux = open('contract_' + 'myContract_2' + ext)
 rsa2.verify_signature(signed_file_aux.read())
 
 signed_file_aux.close()
 img.close()
 
-print('\nVerificando 3 - Firma del artista (cuando ya firmo el cliente)');
+print('\nVerificando 3 - Firma del artista (cuando ya firmo el cliente)')
 signed_file_aux = open('contract_' + 'myContract_2' + ext) # Name of the sign document
 signed = signed_file_aux.read()
 
