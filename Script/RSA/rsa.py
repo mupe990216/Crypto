@@ -35,11 +35,11 @@ class RSA_sign:
     signing_data(data, file_name)
         This function generates a output file signed with the data provide.
         The output file have an extention '.txt'.
-        Note: Image bytes need to send in base64.
+        The hash is generate by base64.
     signing_data(data, file_name, ext)
         This function generates a output file signed with the data provide.
         The output file have an extention provide in the variable 'ext'.
-        Note: Image bytes need to send in base64.
+        The hash is generate by base64.
     verify_signature(signature, ignore)
         This function verify data of a signature, and the output will be if a signed file is valid.
     '''
@@ -123,8 +123,7 @@ class RSA_sign:
         '''
         This function generates a output file signed with the data provide.
         The output file have an extention provide in the variable 'ext'.
-        Verify with private key.
-        Note: Image bytes need to send in base64.
+        Verify with private key. The hash is generate by base64.
 
         Parameters
         ----------
@@ -135,6 +134,8 @@ class RSA_sign:
         ext : str
             Extension for output file
         '''
+        data = base64.encodebytes(data)
+        
         data_hash = SHA256.new()
         data_hash.update(data)
         
@@ -142,7 +143,7 @@ class RSA_sign:
         signature = signer.sign(data_hash)
         
         signed_file = open('contract_' + file_name + ext, "wb")
-        signed_file.write(data)
+        signed_file.write(base64.decodebytes(data))
         signed_file.write(self.separator.encode('utf-8'))
         
         signed_file.write(binascii.hexlify(signature))
@@ -151,7 +152,7 @@ class RSA_sign:
     def verify_signature(self, signature, ignore = 0):
         '''
         This function verify data of a signature, and the output will be if a signed file is valid.
-        Verify with public key.
+        Verify with public key. The hash is generate by base64.
 
         Parameters
         ----------
@@ -167,21 +168,22 @@ class RSA_sign:
         bool
             File signature is valid
         '''
-        parts = signature.split(self.separator)
+        parts = signature.split(bytes(self.separator, 'utf-8'))
 
-        data = ""
+        data = b''
         # In case that found more separator
         # Always the last part will be the sign or signs, others parts will be data from the file
         for i in range(len(parts) - 1 - ignore):
             data += parts[i]
             if(i != len(parts) - 2 - ignore):
-                data += self.separator
+                data += bytes(self.separator, 'utf-8')
+        data = base64.encodebytes(data)
         sign = parts[len(parts) - 1 - ignore]
         sign = binascii.unhexlify(sign)
 
         # We need the hash of data file for sign a file
         data_hash = SHA256.new()
-        data_hash.update(data.encode())
+        data_hash.update(data)
         
         verification = PKCS115_SigScheme(self.public_key)
         try:
@@ -221,13 +223,12 @@ rsa.read_public_key('my_key')
 print('Read text')
 img = open('test2.jpg', 'rb') # read bytes
 img_bytes = img.read()
-image_64_encode = base64.encodebytes(img_bytes)
 
 print('Firmando')
-rsa.signing_data(image_64_encode, 'myContract', ext)
+rsa.signing_data(img_bytes, 'myContract', ext)
 
 print('Verificando 1 - Firma del artista cuando nadie ha firmado')
-signed_file_aux = open('contract_' + 'myContract' + ext) # Name of the sign document
+signed_file_aux = open('contract_' + 'myContract' + ext, "rb") # Name of the sign document
 signed = signed_file_aux.read()
 
 rsa.verify_signature(signed)
@@ -255,14 +256,14 @@ print('Firmando 2')
 rsa2.signing_data(img_bytes, 'myContract_2', ext)
 
 print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)')
-signed_file_aux = open('contract_' + 'myContract_2' + ext)
+signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb')
 rsa2.verify_signature(signed_file_aux.read())
 
 signed_file_aux.close()
 img.close()
 
 print('\nVerificando 3 - Firma del artista (cuando ya firmo el cliente)')
-signed_file_aux = open('contract_' + 'myContract_2' + ext) # Name of the sign document
+signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb') # Name of the sign document
 signed = signed_file_aux.read()
 
 rsa.verify_signature(signed, 1)
