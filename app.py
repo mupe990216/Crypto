@@ -12,7 +12,7 @@ PREVIEW_FOLDER = os.path.abspath("./static/preview/")
 DECIPHER_FOLDER = os.path.abspath("./static/deciphers/")
 
 app = Flask(__name__, static_folder='static',template_folder='templates')
-app.config['SECRET_KEY'] = '12345678'
+app.config['SECRET_KEY'] = '12345678' # Esta llave SOLO ES DE PRUEBA, Es muy inseguro
 app.config["KEY_FOLDER"] = KEY_FOLDER
 app.config["ART_FOLDER"] = ART_FOLDER
 app.config["CIPHER_FOLDER"] = CIPHER_FOLDER

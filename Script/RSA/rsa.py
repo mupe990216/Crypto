@@ -21,7 +21,7 @@ class RSA_sign:
     '''
     def generate_key(self, key_size, file_name):
         '''Generate: 1024 or 2048 or 3072'''
-        self.private_key = RSA.generate(key_size)
+        self.private_key = RSA.generate(key_size) # We are using 2048
 
         '''private'''
         file = open(file_name + self.ext, 'wb')
@@ -37,10 +37,12 @@ class RSA_sign:
     def read_private_key(self, file_name):
         file = open(file_name + self.ext, 'r');
         self.private_key = RSA.import_key(file.read())
+        file.close()
 
     def read_public_key(self, file_name):
         file = open('public_' + file_name + self.ext, 'r');
         self.public_key = RSA.import_key(file.read())
+        file.close()
 
     '''
         Signing data with private key
@@ -72,7 +74,8 @@ class RSA_sign:
             data += parts[i]
         sign = parts[len(parts)-1]
 
-        sign = binascii.unhexlify(sign)        data_hash = SHA256.new(data.encode('utf-8'))
+        sign = binascii.unhexlify(sign)
+        data_hash = SHA256.new(data.encode('utf-8'))
         verification = PKCS115_SigScheme(self.public_key)
         try:
             verification.verify(data_hash, sign)
