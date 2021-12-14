@@ -427,11 +427,11 @@ def crea_contrato(conexion,dic):
 def consulta_contratos(conexion,user,typeUser):
     cursor_tb = conexion.cursor()
     if(typeUser=="Artist"):
-        sentencia = "select * from Contracts where usrArtist='{}'".format(user)
+        sentencia = "select * from Contracts where usrArtist='{}' order by fecha desc".format(user)
     if(typeUser=="Client"):
-        sentencia = "select * from Contracts where usrClient='{}'".format(user)
+        sentencia = "select * from Contracts where usrClient='{}' order by fecha desc".format(user)
     if(typeUser=="Notary"):
-        sentencia = "select * from Contracts where usrPnotar='{}'".format(user)
+        sentencia = "select * from Contracts where usrPnotar='{}' order by fecha desc".format(user)
     respuesta = cursor_tb.execute(sentencia)
     return list_public_art(respuesta.fetchall())
 # Test section
