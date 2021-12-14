@@ -14,6 +14,7 @@ CIPHER_FOLDER = os.path.abspath("./static/ciphers/")
 UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
 PREVIEW_FOLDER = os.path.abspath("./static/preview/")
 DECIPHER_FOLDER = os.path.abspath("./static/deciphers/")
+CERTIFICATE_FOLDER = os.path.abspath("./static/certificates/")
 
 app = Flask(__name__, static_folder='static',template_folder='templates')
 app.config['SECRET_KEY'] = '4c061725a59e73710b110fc19cdfb00598a20a06ac654ffac7808ce5e1b649b0'
@@ -24,6 +25,7 @@ app.config["CIPHER_FOLDER"] = CIPHER_FOLDER
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["PREVIEW_FOLDER"] = PREVIEW_FOLDER
 app.config["DECIPHER_FOLDER"] = DECIPHER_FOLDER
+app.config["CERTIFICATE_FOLDER"] = CERTIFICATE_FOLDER
 
 @app.route('/',methods=['GET'])
 def init():
