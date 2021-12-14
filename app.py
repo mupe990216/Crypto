@@ -147,7 +147,7 @@ def picture():
             else:
                 hashname = request.form['hashname']
                 typeUser = request.form['typeUser']
-                user = request.form['user']
+                artist = request.form['user']
                 if(typeUser=="1"): #Artist
                     conexion = conecta_db("DESart.db")
                     response = modifica_art(conexion,hashname)
@@ -159,12 +159,29 @@ def picture():
                     close_db(conexion)
                     return response
                 if(typeUser=="2"): #Client
-                    pass
-                return "Imagen firmada y cifrada"
+                    return "Purchase completed"
+                if(typeUser=="3"): #Public Notary
+                    client = request.form['user']
+                    return "Signed contract"
+                return "Error"
         else:
             return redirect(url_for("init"))
     except Exception as e:
         print("\n *** Exception picture: {} \n".format(e))
+        return redirect(url_for("init"))
+
+@app.route('/contracts',methods=['GET'])
+def contracts():
+    try:
+        if session["user"]!=None:
+            if(session["typeUser"] == 1): #Artis
+                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=5)
+            if(session["typeUser"] == 2): #Client
+                return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2)
+            if(session["typeUser"] == 3): #Public notary
+                return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2)
+    except Exception as e:
+        print("\n *** Exception contracts: {} \n".format(e))
         return redirect(url_for("init"))
 
 @app.route('/artPublic',methods=['GET'])
@@ -192,7 +209,14 @@ def public():
 @app.route('/buyArt',methods=['POST'])
 def buy():
     try:
-        pass
+        if (session["user"]!=None) and (session["typeUser"]==2):       
+            hashname = request.form['hashname']
+            conexion = conecta_db("DESart.db")
+            response = consulta_art_especifica(conexion,hashname).fetchone()
+            close_db(conexion)
+            return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=1,table=response)     
+        else:
+            return redirect(url_for("init"))
     except Exception as e:
         print("\n *** Exception buy art: {} \n".format(e))
         return redirect(url_for("init"))

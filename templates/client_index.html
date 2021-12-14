@@ -1,9 +1,24 @@
 {% extends "base_client.html" %}
-
 {% block contenido %}
+
+{% if opc == 1 %}
+<div class="row">
+    <nav>
+        <div class="nav-wrapper grey darken-2">
+            <div class="col s12" style="text-align: center;">
+                <a href="/artPublic" class="rutaNavega">See art image</a>
+                <i class="zmdi zmdi-chevron-right rutaNavega" style="display: inline-block;"></i>
+                <a href="#" class="rutaNavegaFinal">Buy an art</a>
+            </div>
+        </div>
+    </nav>
+</div>
+{% endif %}
+
 <div class="row">
     <article class="col s12 center-align">
 
+        <!-- Public art -->
         {% if opc == 0 %}
         <h2>Welcome {{nombre}} !</h2>
         {% if (table|length) == 0 %}
@@ -39,17 +54,72 @@
             {% endfor %}
         </div>
         {% endif %}
-
         {% endif %}
+        <!-- Public art -->
 
 
+        <!-- Buy an art -->
         {% if opc == 1 %}
-
+        <h2 class="center-align">Buy an art</h2>
+        <div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
+            <div class="row">
+                <h4>Are you sure to buy this art?</h4>
+                <form class="col s12" method="POST" action="/picture">
+                    <div class="row">
+                        <h5>Title: {{table[4]}}</h5>
+                    </div>
+                    <div class="row">
+                        <div class="contenedor_slider">
+                            <div class="slider" id="slider">
+                                <div class="slider_section">
+                                    <img src="{{url_for('static',filename='preview/'+table[0])}}" class="slider_img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5>Author: {{table[2]}}</h5>
+                        <h5>Date: {{table[5]}}</h5>
+                    </div><br>
+                    <div class="row">
+                        <input type="checkbox" class="filled-in" id="terms" name="terms" />
+                        <label class="btn_terms" for="terms" style="color: rgb(100, 70, 70); font-size: 24px;">I accept
+                            the terms and conditions</label>
+                    </div>
+                    <div class="row">
+                        <a href="#" style="color: rgb(61, 62, 112); font-size: 18px; text-decoration: underline;">Read
+                            terms and conditions</a>
+                        <input type="hidden" name="hashname" id="hashname" value="{{table[0]}}">
+                        <input type="hidden" name="user" id="user" value="{{table[1]}}">
+                        <input type="hidden" name="typeUser" id="typeUser" value="{{typeUser}}">
+                    </div>
+                    <div class="row">
+                        <div class="input-field col m6 offset-m3 l6 offset-l3">
+                            <button onclick="buyArt()" type="button" class="btn-large waves-effect waves-light">
+                                Sign&nbsp;&nbsp;<i class="zmdi zmdi-border-color"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><br><br>
         {% endif %}
+        <!-- Buy an art -->
 
 
+        <!-- Contracts seccion -->
+        {% if opc == 2 %}
+        <h2 class="center-align">Contracts seccion - Client</h2>
+        <div class="container center-align" style="margin-bottom: 15%;">
+        </div><br><br>
+        {% endif %}
+        <!-- Contracts seccion -->
 
 
     </article>
 </div>
+{% endblock %}
+
+{% block finalJS %}
+<script src="{{ url_for('static',filename='js/client.js') }}"></script>
 {% endblock %}

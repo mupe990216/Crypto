@@ -1,6 +1,6 @@
 {% extends "base_artist.html" %}
-
 {% block contenido %}
+
 {% if opc == 3 %}
 <div class="row">
     <nav>
@@ -76,10 +76,11 @@
 
         <!-- view image file -->
         {% if opc == 2 %}
-        <br>
-        <h2 class="center-align">Sign image file</h2>
-        <h4>Images to sign: {{table|length}} </h4><br>
-
+        <div>
+            <br>
+            <h2 class="center-align">Sign image file</h2>
+            <h4>Images to sign: {{table|length}} </h4><br>
+        </div>
         {% if (table|length) == 0 %}
         <br>
         <h4>You don't have images to sign</h4><br><br><br>
@@ -197,6 +198,13 @@
         {% endif %}
         {% endif %}
         <!-- Public Art -->
+
+
+        <!-- Contracts seccion -->
+        {% if opc == 5 %}
+        <h2>Contracts seccion - Artist</h2>
+        {% endif %}
+        <!-- Contract seccion -->
 
 
     </article>
