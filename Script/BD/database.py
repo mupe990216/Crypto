@@ -1,4 +1,4 @@
-import sqlite3, hashlib, base64
+import sqlite3, hashlib, base64, copy
 def conecta_db(name):
 	return sqlite3.connect(name)
 
@@ -233,6 +233,12 @@ def consulta_art_conFirma(conexion,user):
     respuesta = cursor_tb.execute(sentencia)
     return respuesta
 
+def consulta_art_conFirma_public(conexion):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from artes where statusFirma='Si' order by fecha desc"
+    respuesta = cursor_tb.execute(sentencia)
+    return respuesta
+
 def consulta_art_especifica(conexion,art):
     cursor_tb = conexion.cursor()
     sentencia = "select * from artes where hashname='{}'".format(art)
@@ -265,6 +271,31 @@ def registra_keySinFirma(conexion,keyname,hashImg):
         cursor_tb.execute(sentencia,(keyname,hashImg))
         conexion.commit()
 
+def list_public_art(result_queries):
+    rows_for_html = list()
+    element_for_row = list()
+    counter = 0
+    for query in result_queries:
+        counter += 1
+        element_for_row.append(query)
+        if(counter == 3):
+            rows_for_html.append(copy.deepcopy(element_for_row))
+            element_for_row.clear()
+            counter = 0
+    if(counter != 0):
+        rows_for_html.append(copy.deepcopy(element_for_row))
+        element_for_row.clear()
+        counter = 0
+    return rows_for_html
+    # for row in rows_for_html:
+    #     print(f"\n Row: \n{row} \n")
+        # for element in row:
+        #     print(element)
+    
+    # print(len(rows_for_html))
+    # print(rows_for_html)
+    
+
 # Test section
 # conexion = conecta_db("DESart.db")
 # crea_tbs(conexion)
@@ -273,4 +304,5 @@ def registra_keySinFirma(conexion,keyname,hashImg):
 # consulta_nombre(conexion,'75b3978b7f22dfd20f713d00f8fb2658542c5c4752e163ba21a4e375177a7269')
 # print(consulta_art_especifica(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png').fetchone())
 # print(modifica_art(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png'))
+# list_public_art(consulta_art_conFirma_public(conexion).fetchall())
 # close_db(conexion)

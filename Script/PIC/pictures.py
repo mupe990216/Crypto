@@ -7,7 +7,7 @@ def watermark(oldPath, filename, newPath):
     w, h = img.size
     font = ImageFont.truetype("calibri.ttf", int(w/5))
     draw = ImageDraw.Draw(img)
-    draw.text((w/50,h/50), text='©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art', fill=(205, 205, 205), font=font)
+    draw.text((w/50,h/50), text='©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art\n©D-E-S art', fill=(205, 205, 205), font=font)
     img.save(newPath+"\\"+filename)
     file = open(newPath+"\\"+filename,"rb")
     print(hashlib.sha256(file.read()).hexdigest())

@@ -68,7 +68,7 @@ def menu():
                 if(session["typeUser"] == 1):
                     return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
                 if(session["typeUser"] == 2):
-                    return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
+                    return redirect(url_for("public"))
                 if(session["typeUser"] == 3):
                     return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0)
             else:
@@ -173,15 +173,29 @@ def public():
         if session["user"]!=None:
             if session["typeUser"]==1: #Artist
                 conexion = conecta_db("DESart.db")
-                response = consulta_art_conFirma(conexion,session["user"]).fetchall()
+                resulset = consulta_art_conFirma(conexion,session["user"]).fetchall()
+                response = list_public_art(resulset)
                 close_db(conexion)
                 return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=4,table=response)
+            if session["typeUser"]==2: #Client
+                conexion = conecta_db("DESart.db")
+                resulset = consulta_art_conFirma_public(conexion).fetchall()
+                response = list_public_art(resulset)
+                close_db(conexion)
+                return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=0,table=response)
         else:
             return redirect(url_for("init"))
     except Exception as e:
         print("\n *** Exception public: {} \n".format(e))
         return redirect(url_for("init"))
 
+@app.route('/buyArt',methods=['POST'])
+def buy():
+    try:
+        pass
+    except Exception as e:
+        print("\n *** Exception buy art: {} \n".format(e))
+        return redirect(url_for("init"))
 
 def init_db():
     conexion = conecta_db("DESart.db")
