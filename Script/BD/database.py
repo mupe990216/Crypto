@@ -91,6 +91,29 @@ def crea_tbs(conexion):
 					foreign key(hashname) references artes(hashname)
 				)
 			"""
+		)    
+	cursor_tb.execute(
+			"""
+				create table if not exists Contracts(
+					idContract integer not null primary key autoincrement,
+                    hashContract text not null,
+					usrArtist text not null,
+					usrClient text not null,
+					usrPnotar text not null,
+					hashname text not null,
+					emailArtist text not null,
+                    emailClient text not null,
+                    emailPnotar text not null,
+					fecha timestamp default current_timestamp,
+					foreign key(usrArtist) references persona(usr),
+					foreign key(usrClient) references persona(usr),
+					foreign key(usrPnotar) references persona(usr),
+					foreign key(hashname) references artes(hashname),
+					foreign key(emailArtist) references persona(email),
+					foreign key(emailClient) references persona(email),
+					foreign key(emailPnotar) references persona(email)
+				)
+			"""
 		)
     
 	# Ingresamos los tipos de usuario que tendra el sistema
@@ -347,7 +370,59 @@ def crea_precontrato(conexion,hashname,artist,client):
         mensaje = "Purchase completed"
     return mensaje
 
+def consulta_precontratos_NOfirmados(conexion):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from PreContracts where StatusFil='No' order by fecha desc"
+    respuesta = cursor_tb.execute(sentencia)
+    return list_public_art(respuesta.fetchall())
 
+def consulta_email_dadoUSR(conexion,user):
+    cursor_tb = conexion.cursor()
+    sentencia = "select email from persona where usr='{}'".format(user)
+    respuesta = cursor_tb.execute(sentencia).fetchone()[0]
+    return respuesta
+
+def consulta_precontrato_especi(conexion,idPrecontrato):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from PreContracts where idPreCont='{}'".format(idPrecontrato)
+    respuesta = cursor_tb.execute(sentencia).fetchone()
+    if (respuesta!=None):
+        response = list(respuesta)
+        artist_email = consulta_email_dadoUSR(conexion,respuesta[1])
+        client_email = consulta_email_dadoUSR(conexion,respuesta[2])
+        response.append(artist_email)
+        response.append(client_email)
+        return response
+
+def modifica_precontrato(conexion,idPrecontrato):
+    cursor_tb = conexion.cursor()
+    sentencia = "update PreContracts set StatusFil='Si' where idPreCont='{}'".format(idPrecontrato)
+    cursor_tb.execute(sentencia)
+    conexion.commit()
+    return "Precontrato modificado"
+
+def valida_contrato(conexion,hashContract):
+    mensaje = ""
+    cursor_tb = conexion.cursor()
+    sentencia = "select count(*) from Contracts where hashContract='{}'".format(hashContract)
+    respuesta = cursor_tb.execute(sentencia).fetchone()[0]
+    if(respuesta != 0):
+        mensaje = "Contrato existente"
+    else:
+        mensaje = "Sin existencia"
+    return mensaje
+
+def crea_contrato(conexion,dic):
+    newName = dic['userArtist'] + dic['userClient'] + dic['userPnotar']
+    idCont = hashlib.sha256(newName.encode()).hexdigest()
+    mensaje = valida_contrato(conexion,idCont)
+    if(mensaje == "Sin existencia"):
+        cursor_tb = conexion.cursor()
+        sentencia = "insert into Contracts(hashContract,usrArtist,usrClient,usrPnotar,hashname,emailArtist,emailClient,emailPnotar) values(?,?,?,?,?,?,?,?)"
+        cursor_tb.execute(sentencia,(idCont,dic['userArtist'],dic['userClient'],dic['userPnotar'],dic['hashname'],dic['emailArtist'],dic['emailClient'],dic['emailPnotar']))
+        conexion.commit()
+        mensaje = "Signed contract"
+    return mensaje
 
 # Test section
 # conexion = conecta_db("DESart.db")
@@ -358,4 +433,5 @@ def crea_precontrato(conexion,hashname,artist,client):
 # print(consulta_art_especifica(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png').fetchone())
 # print(modifica_art(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png'))
 # list_public_art(consulta_art_conFirma_public(conexion).fetchall())
+# consulta_precontrato_especi(conexion,'1')
 # close_db(conexion)

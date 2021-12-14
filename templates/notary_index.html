@@ -1,23 +1,119 @@
 {% extends "base_notary.html" %}
-
 {% block contenido %}
+
+{% if opc == 11 %}
+<div class="row">
+    <nav>
+        <div class="nav-wrapper grey darken-2">
+            <div class="col s12" style="text-align: center;">
+                <a href="/signContracts" class="rutaNavega">Select a contract</a>
+                <i class="zmdi zmdi-chevron-right rutaNavega" style="display: inline-block;"></i>
+                <a href="#" class="rutaNavegaFinal">Sign a contract</a>
+            </div>
+        </div>
+    </nav>
+</div>
+{% endif %}
 <div class="row">
     <article class="col s12 center-align">
 
         {% if opc == 0 %}
         <p>
-            <h2>Welcome {{nombre}} !</h2>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <h2>Welcome {{nombre}} !</h2>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         </p>
         {% endif %}
 
 
 
         {% if opc == 1 %}
-        <h2>Contracts to sign</h2>
+        <h2 class="center-align">Contracts to sign</h2>
+        {% if (table|length) == 0 %}
+        <br>
+        <h4>There is not contracts to sign</h4><br><br><br>
+        {% else %}
+        <div class="container center-align" style="margin-bottom: 15%;">
+            {% for row in table %}
+            <div class="row">
+                {% for query in row %}
+                <div class="col s4 l4">
+                    <div class="card grey darken-2 center-box">
+                        <form method="POST" action="/signContracts">
+                            <div class="card-image">
+                                <img class="materialboxed hola1"
+                                    src="{{url_for('static',filename='preview/'+query[3])}}">
+                                <input type="hidden" id="idContract" name="idContract" value="{{query[0]}}">
+                            </div>
+                            <div class="card-content white-text">
+                                <p class="TituloPostal" style="text-align: center;">{{query[5]}}</p>
+                                <p class="TituloPostal" style="text-align: center;">Contract N°: {{query[0]}}</p>
+                            </div>
+                            <div class="card-action">
+                                <button type="submit" class="btn orange darken-2 waves-effect waves-light BotonPostal">
+                                    Sign <i class="zmdi zmdi-long-arrow-tab"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endif %}
 
-
+        {% if opc == 11 %}
+        <h2 class="center-align">Terms and conditions</h2>
+        <div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
+            <div class="row">
+                <h4>Are you sure to sign this contract?</h4>
+                <form class="col s12" method="POST" action="/picture">
+                    <div class="row">
+                        <h5>Contract N°: {{table[0]}}</h5>
+                    </div>
+                    <div class="row">
+                        <div class="contenedor_slider">
+                            <div class="slider" id="slider">
+                                <div class="slider_section">
+                                    <img src="{{url_for('static',filename='preview/'+table[3])}}" class="slider_img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5>Artist: {{table[6]}}</h5>
+                        <h5>Client: {{table[7]}}</h5>
+                        <h5>Date: {{table[5]}}</h5>
+                    </div><br>
+                    <div class="row">
+                        <input type="checkbox" class="filled-in" id="terms" name="terms" />
+                        <label class="btn_terms" for="terms" style="color: rgb(100, 70, 70); font-size: 24px;">I accept
+                            the terms and conditions</label>
+                    </div>
+                    <div class="row">
+                        <a href="#" style="color: rgb(61, 62, 112); font-size: 18px; text-decoration: underline;">Read
+                            terms and conditions</a>
+                        <input type="hidden" name="userArtist" id="userArtist" value="{{table[1]}}">
+                        <input type="hidden" name="userClient" id="userClient" value="{{table[2]}}">
+                        <input type="hidden" name="userPnotar" id="userPnotar" value="{{user}}">
+                        <input type="hidden" name="hashname" id="hashname" value="{{table[3]}}">
+                        <input type="hidden" name="emailArtist" id="emailArtist" value="{{table[6]}}">
+                        <input type="hidden" name="emailClient" id="emailClient" value="{{table[7]}}">
+                        <input type="hidden" name="emailPnotar" id="emailPnotar" value="{{email}}">
+                        <input type="hidden" name="typeUser" id="typeUser" value="{{typeUser}}">
+                        <input type="hidden" name="idPreCont" id="idPreCont" value="{{table[0]}}">
+                    </div>
+                    <div class="row">
+                        <div class="input-field col m6 offset-m3 l6 offset-l3">
+                            <button onclick="signContract()" type="button" class="btn-large waves-effect waves-light">
+                                Sign&nbsp;&nbsp;<i class="zmdi zmdi-border-color"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><br><br>
+        {% endif %}
 
         {% if opc == 2 %}
         <h2>Contracts seccion - Public notary</h2>
@@ -27,4 +123,8 @@
 
     </article>
 </div>
+{% endblock %}
+
+{% block finalJS %}
+<script src="{{ url_for('static',filename='js/notary.js') }}"></script>
 {% endblock %}

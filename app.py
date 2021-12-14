@@ -148,7 +148,6 @@ def picture():
             else:
                 hashname = request.form['hashname']
                 typeUser = request.form['typeUser']
-                artist = request.form['user']
                 if(typeUser=="1"): #Artist
                     conexion = conecta_db("DESart.db")
                     response = modifica_art(conexion,hashname)
@@ -161,15 +160,22 @@ def picture():
                     # Falta que el artiste firme la imagen
                     return response
                 if(typeUser=="2"): #Client
+                    artist = request.form['user']
                     conexion = conecta_db("DESart.db")
                     response = crea_precontrato(conexion,hashname,artist,session["user"])
                     close_db(conexion)
                     # Falta que el cliente firme la imagen
                     return response
                 if(typeUser=="3"): #Public Notary
-                    client = request.form['user']
                     # Falta que el notario publico firme la imagen
-                    return "Signed contract"
+                    dataJson = json.loads(request.form['dataJson'])
+                    conexion = conecta_db("DESart.db")
+                    response = modifica_precontrato(conexion,dataJson['idPreCont'])
+                    response = crea_contrato(conexion,dataJson)
+                    close_db(conexion)
+                    # print(dataJson)
+                    return response
+                    # return "Signed contract"
                 return "Error"
         else:
             return redirect(url_for("init"))
@@ -228,11 +234,24 @@ def buy():
         print("\n *** Exception buy art: {} \n".format(e))
         return redirect(url_for("init"))
 
-@app.route('/signContracts',methods=['GET'])
+@app.route('/signContracts',methods=['GET','POST'])
 def signContracts():
     try:
         if session["user"]!=None:
-            return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=1)
+            if request.method == 'GET':
+                conexion = conecta_db("DESart.db")
+                response = consulta_precontratos_NOfirmados(conexion)
+                close_db(conexion)
+                return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=1,table=response)
+            else:
+                if not "idContract" in request.form:
+                    return redirect(url_for("sign"))
+                else:
+                    idPreCon = request.form['idContract']
+                    conexion = conecta_db("DESart.db")
+                    response = consulta_precontrato_especi(conexion,idPreCon)
+                    close_db(conexion)
+                    return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],user=session["user"],email=session["email"],opc=11,table=response)
         else:
             return redirect(url_for("init"))
     except Exception as e:
