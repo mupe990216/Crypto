@@ -109,9 +109,46 @@
 
         <!-- Contracts seccion -->
         {% if opc == 2 %}
-        <h2 class="center-align">Contracts seccion - Client</h2>
+        <h2 class="center-align">Contracts Signed by me</h2>
+        {% if (table|length) == 0 %}
+        <br>
+        <h4>There is not contracts to show</h4><br><br><br>
+        {% else %}
         <div class="container center-align" style="margin-bottom: 15%;">
-        </div><br><br>
+            {% for row in table %}
+            <div class="row">
+                {% for query in row %}
+                <div class="col s4 l4">
+                    <div class="card grey darken-2 center-box">
+                        <form method="POST" action="/verify">
+                            <div class="card-image">
+                                <img class="materialboxed hola1"
+                                    src="{{url_for('static',filename='preview/'+query[5])}}">
+                                <input type="hidden" id="idContract" name="idContract" value="{{query[0]}}">
+                            </div>
+                            <div class="card-content white-text">
+                                <p class="TituloPostal" style="text-align: center;">Contract N°: {{query[0]}}</p>
+                                <p class="TituloPostal" style="text-align: center;">Artist: {{query[6]}}</p>
+                                <p class="TituloPostal" style="text-align: center;">Client: {{query[7]}}</p>
+                                <p class="TituloPostal" style="text-align: center;">Notary: {{query[8]}}</p>
+                                <p class="TituloPostal" style="text-align: center;">Date: {{query[9]}}</p>
+                            </div>
+                            <div class="card-action">
+                                <button type="submit" class="btn indigo darken-2 waves-effect waves-light BotonPostal">
+                                    Verify Image <i class="zmdi zmdi-shield-check"></i></button>
+                            </div>
+                            <div class="card-action">
+                                <button type="button" class="btn pink darken-2 waves-effect waves-light BotonPostal">
+                                    See Certificate <i class="zmdi zmdi-view-web"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endif %}
         <!-- Contracts seccion -->
 

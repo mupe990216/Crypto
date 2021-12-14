@@ -413,7 +413,7 @@ def valida_contrato(conexion,hashContract):
     return mensaje
 
 def crea_contrato(conexion,dic):
-    newName = dic['userArtist'] + dic['userClient'] + dic['userPnotar']
+    newName = dic['userArtist'] + dic['userClient'] + dic['userPnotar'] + dic['idPreCont']
     idCont = hashlib.sha256(newName.encode()).hexdigest()
     mensaje = valida_contrato(conexion,idCont)
     if(mensaje == "Sin existencia"):
@@ -424,6 +424,16 @@ def crea_contrato(conexion,dic):
         mensaje = "Signed contract"
     return mensaje
 
+def consulta_contratos(conexion,user,typeUser):
+    cursor_tb = conexion.cursor()
+    if(typeUser=="Artist"):
+        sentencia = "select * from Contracts where usrArtist='{}'".format(user)
+    if(typeUser=="Client"):
+        sentencia = "select * from Contracts where usrClient='{}'".format(user)
+    if(typeUser=="Notary"):
+        sentencia = "select * from Contracts where usrPnotar='{}'".format(user)
+    respuesta = cursor_tb.execute(sentencia)
+    return list_public_art(respuesta.fetchall())
 # Test section
 # conexion = conecta_db("DESart.db")
 # crea_tbs(conexion)

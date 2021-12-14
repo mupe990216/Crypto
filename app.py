@@ -1,4 +1,6 @@
 import json, os
+
+from flask.wrappers import Response
 from Script.BD.database import *
 from Script.PIC.pictures import *
 from Script.RSA.RSAFunctions import *
@@ -173,10 +175,9 @@ def picture():
                     response = modifica_precontrato(conexion,dataJson['idPreCont'])
                     response = crea_contrato(conexion,dataJson)
                     close_db(conexion)
-                    # print(dataJson)
                     return response
                     # return "Signed contract"
-                return "Error"
+                return "Error - TypeUser"
         else:
             return redirect(url_for("init"))
     except Exception as e:
@@ -188,11 +189,20 @@ def contracts():
     try:
         if session["user"]!=None:
             if(session["typeUser"] == 1): #Artis
-                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=5)
+                conexion = conecta_db("DESart.db")
+                response = consulta_contratos(conexion,session["user"],"Artist")
+                close_db(conexion)
+                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=5,table=response)
             if(session["typeUser"] == 2): #Client
-                return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2)
+                conexion = conecta_db("DESart.db")
+                response = consulta_contratos(conexion,session["user"],"Client")
+                close_db(conexion)
+                return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2,table=response)
             if(session["typeUser"] == 3): #Public notary
-                return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2)
+                conexion = conecta_db("DESart.db")
+                response = consulta_contratos(conexion,session["user"],"Notary")
+                close_db(conexion)
+                return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=2,table=response)
     except Exception as e:
         print("\n *** Exception contracts: {} \n".format(e))
         return redirect(url_for("init"))
@@ -257,6 +267,10 @@ def signContracts():
     except Exception as e:
         print("\n *** Exception signContracts: {} \n".format(e))
         return redirect(url_for("init"))
+
+@app.route('/verify',methods=['GET','POST'])
+def verify():
+    return "ok"
 
 def init_db():
     conexion = conecta_db("DESart.db")
