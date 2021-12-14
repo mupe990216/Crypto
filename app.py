@@ -9,15 +9,17 @@ from flask import Flask, render_template, request, url_for, redirect, session
 from werkzeug.utils import secure_filename
 KEY_FOLDER = os.path.abspath("./keys/")
 ART_FOLDER = os.path.abspath("./static/arts/")
+VERIFY_FOLDER = os.path.abspath("./static/verify/")
 CIPHER_FOLDER = os.path.abspath("./static/ciphers/")
 UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
 PREVIEW_FOLDER = os.path.abspath("./static/preview/")
 DECIPHER_FOLDER = os.path.abspath("./static/deciphers/")
 
 app = Flask(__name__, static_folder='static',template_folder='templates')
-app.config['SECRET_KEY'] = '12345678' # Esta llave SOLO ES DE PRUEBA, Es muy inseguro
+app.config['SECRET_KEY'] = '4c061725a59e73710b110fc19cdfb00598a20a06ac654ffac7808ce5e1b649b0'
 app.config["KEY_FOLDER"] = KEY_FOLDER
 app.config["ART_FOLDER"] = ART_FOLDER
+app.config["VERIFY_FOLDER"] = VERIFY_FOLDER
 app.config["CIPHER_FOLDER"] = CIPHER_FOLDER
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["PREVIEW_FOLDER"] = PREVIEW_FOLDER
@@ -207,6 +209,11 @@ def contracts():
         print("\n *** Exception contracts: {} \n".format(e))
         return redirect(url_for("init"))
 
+@app.route('/contracts/<certificate>',methods=['GET'])
+def certificate(certificate):
+    # Mostrar el Certificado en PDF
+    return certificate
+
 @app.route('/artPublic',methods=['GET'])
 def public():
     try:
@@ -268,9 +275,39 @@ def signContracts():
         print("\n *** Exception signContracts: {} \n".format(e))
         return redirect(url_for("init"))
 
-@app.route('/verify',methods=['GET','POST'])
+@app.route('/verify',methods=['POST'])
 def verify():
-    return "ok"
+    try:
+        if session["user"]!=None:
+            idContract = request.form['idContract']
+            conexion = conecta_db("DESart.db")
+            response = consulta_contrato_porID(conexion,idContract)
+            close_db(conexion)
+            if(session["typeUser"] == 1): #Artis
+                return render_template('artist_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=6,table=response)
+            if(session["typeUser"] == 2): #Client
+                return render_template('client_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=3,table=response)
+            if(session["typeUser"] == 3): #Public notary
+                return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=3,table=response)
+    except Exception as e:
+        print("\n *** Exception contracts: {} \n".format(e))
+        return redirect(url_for("init"))
+
+@app.route('/CheckSigns',methods=['GET','POST'])
+def CheckSigns():
+    if not "imageFile" in request.files:
+        return "No file part in the form."
+    file = request.files["imageFile"]
+    idContrac = json.loads(request.form["title"])['title']
+    filename = file.filename
+    if(filename==""):
+        return "Select a valid file"
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config["VERIFY_FOLDER"],filename))
+        # Comprobar firma digital de los tres actores
+        return "Digital signatures match"
+
 
 def init_db():
     conexion = conecta_db("DESart.db")

@@ -14,6 +14,19 @@
     </nav>
 </div>
 {% endif %}
+{% if opc == 3 %}
+<div class="row">
+    <nav>
+        <div class="nav-wrapper grey darken-2">
+            <div class="col s12" style="text-align: center;">
+                <a href="/contracts" class="rutaNavega">Contracts Signed By Me</a>
+                <i class="zmdi zmdi-chevron-right rutaNavega" style="display: inline-block;"></i>
+                <a href="#" class="rutaNavegaFinal">Verify Image</a>
+            </div>
+        </div>
+    </nav>
+</div>
+{% endif %}
 
 <div class="row">
     <article class="col s12 center-align">
@@ -138,8 +151,8 @@
                                     Verify Image <i class="zmdi zmdi-shield-check"></i></button>
                             </div>
                             <div class="card-action">
-                                <button type="button" class="btn pink darken-2 waves-effect waves-light BotonPostal">
-                                    See Certificate <i class="zmdi zmdi-view-web"></i></button>
+                                <a target="_blank" href="/contracts/{{query[1]}}" type="button" class="btn pink darken-2 waves-effect waves-light BotonPostal">
+                                    See Certificate <i class="zmdi zmdi-view-web"></i></a>
                             </div>
                         </form>
                     </div>
@@ -153,10 +166,56 @@
         <!-- Contracts seccion -->
 
 
+        {% if opc == 3 %}
+        <br>
+        <h2 class="center-align">Verify Image</h2>
+        <div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
+            <div class="row center-align">
+                <form class="col s12" method="POST" action="/CheckSigns" enctype="multipart/form-data"><br>
+                    <h4 class="center-align">Select the image file of your contract</h4>
+                    <img width="280" src="{{url_for('static',filename='preview/'+table[5])}}">
+                    <h5 class="center-align">Contract N°: {{table[0]}}</h5>
+                    <h5 class="center-align">Artist: {{table[6]}}</h5>
+                    <h5 class="center-align">Client: {{table[7]}}</h5>
+                    <h5 class="center-align">Notary: {{table[8]}}</h5>
+                    <input id="title" name="title" type="hidden" value="{{table[0]}}">
+                    <div class="row">
+                        <div class="file-field input-field col m12 l8 offset-l2">
+                            <div class="btn">
+                                <span>File</span>
+                                <input type="file" name="imageFile" id="imageFile" onchange="return validarExt()">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col m12 l8 offset-l2" id="visorArchivo">
+                            <!--Aqui se desplegará el fichero-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col m6 offset-m3 l6 offset-l3">
+                            <button onclick="verify()" type="button" class="btn-large waves-effect waves-light">
+                                Send&nbsp;&nbsp;<i class="zmdi zmdi-mail-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><br><br>
+        {% endif %}
+
+
+
     </article>
 </div>
 {% endblock %}
 
 {% block finalJS %}
 <script src="{{ url_for('static',filename='js/client.js') }}"></script>
+{% if opc == 3 %}
+<script src="{{ url_for('static',filename='js/verifyIMG.js') }}"></script>
+{% endif %}
 {% endblock %}

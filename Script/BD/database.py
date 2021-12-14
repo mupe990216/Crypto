@@ -434,6 +434,14 @@ def consulta_contratos(conexion,user,typeUser):
         sentencia = "select * from Contracts where usrPnotar='{}' order by fecha desc".format(user)
     respuesta = cursor_tb.execute(sentencia)
     return list_public_art(respuesta.fetchall())
+
+def consulta_contrato_porID(conexion,idContrato):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from Contracts where idContract='{}'".format(idContrato)
+    respuesta = cursor_tb.execute(sentencia).fetchone()
+    if (respuesta!=None):
+        return respuesta
+
 # Test section
 # conexion = conecta_db("DESart.db")
 # crea_tbs(conexion)
