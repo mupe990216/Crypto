@@ -1,4 +1,5 @@
-import sqlite3, hashlib, base64, copy
+import sqlite3, hashlib, copy
+from Script.RSA.RSAFunctions import generate_key_RSA
 def conecta_db(name):
 	return sqlite3.connect(name)
 
@@ -60,6 +61,33 @@ def crea_tbs(conexion):
 					namekey text not null,
 					hashname text not null,
 					fecha timestamp default current_timestamp,
+					foreign key(hashname) references artes(hashname)
+				)
+			"""
+		)    
+	cursor_tb.execute(
+			"""
+				create table if not exists RSAKeys(
+					idKeyRegister integer not null primary key autoincrement,
+					publicKey text not null,
+					privateKey text not null,
+					usr text not null,
+					fecha timestamp default current_timestamp,
+					foreign key(usr) references persona(usr)
+				)
+			"""
+		)    
+	cursor_tb.execute(
+			"""
+				create table if not exists PreContracts(
+					idPreCont integer not null primary key autoincrement,
+					usrArtist text not null,
+					usrClient text not null,
+					hashname text not null,
+                    StatusFil text not null,
+					fecha timestamp default current_timestamp,
+					foreign key(usrArtist) references persona(usr),
+					foreign key(usrClient) references persona(usr),
 					foreign key(hashname) references artes(hashname)
 				)
 			"""
@@ -137,7 +165,7 @@ def valida_email(conexion,email):
         mensaje = "Sin existencia"
     return mensaje
     
-def alta_usr(conexion,dicInfo):
+def alta_usr(conexion,dicInfo,pathForKey):
     mensaje = ""
     cursor_tb = conexion.cursor()
     infoToinser = clearDict(dicInfo)
@@ -153,6 +181,9 @@ def alta_usr(conexion,dicInfo):
             cursor_tb.execute(sentencia,(infoToinser[1],infoToinser[8]))
             sentencia = "insert into persona values(?,?,?,?,?,?,?,?)"
             cursor_tb.execute(sentencia,(infoToinser[:-1]))
+            keys = generate_key_RSA(pathForKey)
+            sentencia = "insert into RSAKeys(publicKey,privateKey,usr) values(?,?,?)"
+            cursor_tb.execute(sentencia,(keys['publicKey'],keys['privateKey'],infoToinser[1]))
             conexion.commit()
             mensaje = "Registration successful!"
     return mensaje
@@ -295,6 +326,28 @@ def list_public_art(result_queries):
     # print(len(rows_for_html))
     # print(rows_for_html)
     
+def valida_precontrato(conexion,hashname,artist,client):
+    mensaje = ""
+    cursor_tb = conexion.cursor()
+    sentencia = "select count(*) from PreContracts where (hashname='{}' and usrArtist='{}' and usrClient='{}')".format(hashname,artist,client)
+    respuesta = cursor_tb.execute(sentencia).fetchone()[0]
+    if(respuesta != 0):
+        mensaje = "Precontrato existente"
+    else:
+        mensaje = "Sin existencia"
+    return mensaje
+
+def crea_precontrato(conexion,hashname,artist,client):
+    mensaje = valida_precontrato(conexion,hashname,artist,client)
+    if(mensaje == "Sin existencia"):
+        cursor_tb = conexion.cursor()
+        sentencia = "insert into PreContracts(usrArtist,usrClient,hashname,StatusFil) values(?,?,?,'No')"
+        cursor_tb.execute(sentencia,(artist,client,hashname))
+        conexion.commit()
+        mensaje = "Purchase completed"
+    return mensaje
+
+
 
 # Test section
 # conexion = conecta_db("DESart.db")

@@ -1,6 +1,7 @@
 import json, os
 from Script.BD.database import *
 from Script.PIC.pictures import *
+from Script.RSA.RSAFunctions import *
 from Script.AES.AESfunctions import *
 from flask import Flask, render_template, request, url_for, redirect, session
 from werkzeug.utils import secure_filename
@@ -48,7 +49,7 @@ def registration():
 def register():
     dataJson = json.loads(request.form['dataJson'])
     conexion = conecta_db("DESart.db")
-    response = alta_usr(conexion,dataJson)
+    response = alta_usr(conexion,dataJson,app.config["KEY_FOLDER"])
     close_db(conexion)
     return response
 
@@ -157,11 +158,17 @@ def picture():
                     encrypt_AES(app.config["KEY_FOLDER"],keyname,app.config["UPLOAD_FOLDER"],hashname,app.config["CIPHER_FOLDER"])
                     decrypt_AES(app.config["KEY_FOLDER"],keyname,app.config["CIPHER_FOLDER"],hashname,app.config["DECIPHER_FOLDER"])
                     close_db(conexion)
+                    # Falta que el artiste firme la imagen
                     return response
                 if(typeUser=="2"): #Client
-                    return "Purchase completed"
+                    conexion = conecta_db("DESart.db")
+                    response = crea_precontrato(conexion,hashname,artist,session["user"])
+                    close_db(conexion)
+                    # Falta que el cliente firme la imagen
+                    return response
                 if(typeUser=="3"): #Public Notary
                     client = request.form['user']
+                    # Falta que el notario publico firme la imagen
                     return "Signed contract"
                 return "Error"
         else:
@@ -219,6 +226,17 @@ def buy():
             return redirect(url_for("init"))
     except Exception as e:
         print("\n *** Exception buy art: {} \n".format(e))
+        return redirect(url_for("init"))
+
+@app.route('/signContracts',methods=['GET'])
+def signContracts():
+    try:
+        if session["user"]!=None:
+            return render_template('notary_index.html',nombre=session["name"],gen=session["gender"],typeUser=session["typeUser"],opc=1)
+        else:
+            return redirect(url_for("init"))
+    except Exception as e:
+        print("\n *** Exception signContracts: {} \n".format(e))
         return redirect(url_for("init"))
 
 def init_db():

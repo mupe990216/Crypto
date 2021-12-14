@@ -29,14 +29,17 @@ function buyArt() {
                                 type: "success"
                             },
                                 function () {
-                                    setTimeout(function () { location.href = "/artPublic"; }, 200);//Esperamos 0.2s para recargar la pagina
+                                    setTimeout(function () { location.href = "/contracts"; }, 200);//Esperamos 0.2s para recargar la pagina
                                 });
                         } else {
                             swal({
                                 title: "Something went wrong",
                                 text: response,
                                 type: "error"
-                            });
+                            },
+                                function () {
+                                    setTimeout(function () { location.href = "/contracts"; }, 200);//Esperamos 0.2s para recargar la pagina
+                                });
                         }
                     },
                     error: function (response) { swal("Server Error", response); }

@@ -210,62 +210,62 @@ class RSA_sign:
 '''
     TEST
 '''
-ext = '.jpg'
+# ext = '.jpg'
 
-print('Generate keys')
-rsa = RSA_sign()
-rsa.generate_key(2048, 'my_key')
+# print('Generate keys')
+# rsa = RSA_sign()
+# rsa.generate_key(2048, 'my_key')
 
-print('Read keys')
-rsa.read_private_key('my_key')
-rsa.read_public_key('my_key')
+# print('Read keys')
+# rsa.read_private_key('my_key')
+# rsa.read_public_key('my_key')
 
-print('Read text')
-img = open('test2.jpg', 'rb') # read bytes
-img_bytes = img.read()
+# print('Read text')
+# img = open('test2.jpg', 'rb') # read bytes
+# img_bytes = img.read()
 
-print('Firmando')
-rsa.signing_data(img_bytes, 'myContract', ext)
+# print('Firmando')
+# rsa.signing_data(img_bytes, 'myContract', ext)
 
-print('Verificando 1 - Firma del artista cuando nadie ha firmado')
-signed_file_aux = open('contract_' + 'myContract' + ext, "rb") # Name of the sign document
-signed = signed_file_aux.read()
+# print('Verificando 1 - Firma del artista cuando nadie ha firmado')
+# signed_file_aux = open('contract_' + 'myContract' + ext, "rb") # Name of the sign document
+# signed = signed_file_aux.read()
 
-rsa.verify_signature(signed)
+# rsa.verify_signature(signed)
 
-img.close()
-signed_file_aux.close()
-
-
+# img.close()
+# signed_file_aux.close()
 
 
-# Second Person
-print('\nSecond Person')
-rsa2 = RSA_sign()
-rsa2.generate_key(2048, 'my_key2')
 
-print('Read keys 2')
-rsa2.read_private_key('my_key2')
-rsa2.read_public_key('my_key2')
 
-print('Read text 2')
-img = open('contract_' + 'myContract' + ext, 'rb') # read bytes
-img_bytes = img.read()
+# # Second Person
+# print('\nSecond Person')
+# rsa2 = RSA_sign()
+# rsa2.generate_key(2048, 'my_key2')
 
-print('Firmando 2')
-rsa2.signing_data(img_bytes, 'myContract_2', ext)
+# print('Read keys 2')
+# rsa2.read_private_key('my_key2')
+# rsa2.read_public_key('my_key2')
 
-print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)')
-signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb')
-rsa2.verify_signature(signed_file_aux.read())
+# print('Read text 2')
+# img = open('contract_' + 'myContract' + ext, 'rb') # read bytes
+# img_bytes = img.read()
 
-signed_file_aux.close()
-img.close()
+# print('Firmando 2')
+# rsa2.signing_data(img_bytes, 'myContract_2', ext)
 
-print('\nVerificando 3 - Firma del artista (cuando ya firmo el cliente)')
-signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb') # Name of the sign document
-signed = signed_file_aux.read()
+# print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)')
+# signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb')
+# rsa2.verify_signature(signed_file_aux.read())
 
-rsa.verify_signature(signed, 1)
+# signed_file_aux.close()
+# img.close()
 
-signed_file_aux.close()
+# print('\nVerificando 3 - Firma del artista (cuando ya firmo el cliente)')
+# signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb') # Name of the sign document
+# signed = signed_file_aux.read()
+
+# rsa.verify_signature(signed, 1)
+
+# signed_file_aux.close()
