@@ -38,7 +38,7 @@
         {% endif %}
 
 
-
+        <!-- List to sign -->
         {% if opc == 1 %}
         <h2 class="center-align">Contracts to sign</h2>
         {% if (table|length) == 0 %}
@@ -74,7 +74,10 @@
         </div>
         {% endif %}
         {% endif %}
+        <!-- List to sign -->
 
+        
+        <!-- Sign a picture -->
         {% if opc == 11 %}
         <h2 class="center-align">Terms and conditions</h2>
         <div class="container" style="margin-bottom: 15%; background-color: gray; padding: 3%; border-radius: 25px;">
@@ -127,7 +130,10 @@
             </div>
         </div><br><br>
         {% endif %}
+        <!-- Sign a picture -->
 
+
+        <!-- List Contracts Signed -->
         {% if opc == 2 %}
         <h2 class="center-align">Contracts Signed by me</h2>
         {% if (table|length) == 0 %}
@@ -170,7 +176,10 @@
         </div>
         {% endif %}
         {% endif %}
+        <!-- List Contracts Signed -->
 
+
+        <!-- Verify Image -->
         {% if opc == 3 %}
         <br>
         <h2 class="center-align">Verify Image</h2>
@@ -211,6 +220,7 @@
             </div>
         </div><br><br>
         {% endif %}
+        <!-- Verify Image -->
 
 
     </article>

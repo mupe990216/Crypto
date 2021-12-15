@@ -174,7 +174,7 @@ def picture():
                         # Artist verifies signature
                         name_public_key = consulta_public_keyRSA(conexion,session["user"])
                         public_key_rsa = read_public_key(app.config["KEY_FOLDER"],name_public_key)
-                        response = verify_signature(app.config["SIGNED_FOLDER"],hashname,public_key_rsa)
+                        response = verify_signature(app.config["SIGNED_FOLDER"],hashname,public_key_rsa,0)
 
                         # AES Cipher
 
@@ -193,7 +193,11 @@ def picture():
                     # Client verifies signature
                     name_public_key = consulta_public_keyRSA(conexion,session["user"])
                     public_key_rsa = read_public_key(app.config["KEY_FOLDER"],name_public_key)
-                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,public_key_rsa)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,public_key_rsa,0)
+                    # Artist verifies signature
+                    artis_public_key = consulta_public_keyRSA(conexion,artist)
+                    artis_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],artis_public_key)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,artis_public_key_rsa,1)
 
                     # AES Cipher
 
@@ -205,17 +209,7 @@ def picture():
                     conexion = conecta_db("DESart.db")
                     response = modifica_precontrato(conexion,dataJson['idPreCont'])
                     response,certificate = crea_contrato(conexion,dataJson)
-                    # TEMPLATE_FOLDER = os.path.abspath("./templates/")
-                    # ELEMENTS_FOLDER = os.path.abspath("./static/img/")
-                    # PICTURES_FOLDER = os.path.abspath("./static/uploads/")
-                    # CONDITIO_FOLDER = os.path.abspath("./static/")
-                    # paths['TEMPLATE'] = TEMPLATE_FOLDER
-                    # paths['PICTURES'] = ELEMENTS_FOLDER
-                    # paths['ARTS_DIR'] = PICTURES_FOLDER
-                    # paths['A_SIGNED'] = ARTSSIGN_FOLDER
-                    # paths['CONDITIONS'] = CONDITIO_FOLDER
-                    # paths['CERTIFICATES'] = CERTIFICATE_FOLDER
-                    # Public notary signature
+                    # Public Notary signature
                     name_private_key = consulta_private_keyRSA(conexion,session["user"])
                     private_key_rsa = read_private_key(app.config["KEY_FOLDER"],name_private_key)
                     response = signing_data(app.config["SIGNED_FOLDER"],hashname,app.config["CERTIFICATE_FOLDER"], private_key_rsa)
@@ -224,18 +218,18 @@ def picture():
                     # Public Notary verifies signature
                     notary_public_key = consulta_public_keyRSA(conexion,session["user"])
                     notary_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],notary_public_key)
-                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,notary_public_key_rsa)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,notary_public_key_rsa,0)
                     # Client verifies signature
                     client_public_key = consulta_public_keyRSA(conexion,dataJson['userClient'])
                     client_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],client_public_key)
-                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,client_public_key_rsa)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,client_public_key_rsa,1)
                     # Artist verifies signature
                     artist_public_key = consulta_public_keyRSA(conexion,dataJson['userArtist'])
                     artist_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],artist_public_key)
-                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,artist_public_key_rsa)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,artist_public_key_rsa,2)
+                    print(f" * {response}")
                     # AES Cipher
-                    paths = dict()
-                    define_paths(paths)
+                    paths = define_paths()
                     queryContract = consulta_contrato_hash(conexion,certificate)
                     generate_PDF(paths,queryContract)
                     send_contracts_email(paths,queryContract)
@@ -248,7 +242,8 @@ def picture():
         print("\n *** Exception picture: {} \n".format(e))
         return redirect(url_for("init"))
 
-def define_paths(paths):
+def define_paths():
+    paths = dict()
     TEMPLATE_FOLDER = os.path.abspath("./templates/")
     ELEMENTS_FOLDER = os.path.abspath("./static/img/")
     PICTURES_FOLDER = os.path.abspath("./static/uploads/")
@@ -259,6 +254,7 @@ def define_paths(paths):
     paths['A_SIGNED'] = ARTSSIGN_FOLDER
     paths['CONDITIONS'] = CONDITIO_FOLDER
     paths['CERTIFICATES'] = CERTIFICATE_FOLDER
+    return paths
 
 @app.route('/contracts',methods=['GET'])
 def contracts():
@@ -290,16 +286,6 @@ def certificate(certificate):
     response = valida_contrato(conexion,certificate)
     if(response=="Contrato existente"):
         response = consulta_contrato_hash(conexion,certificate)
-        # paths = dict()
-        # TEMPLATE_FOLDER = os.path.abspath("./templates/")
-        # ELEMENTS_FOLDER = os.path.abspath("./static/img/")
-        # PICTURES_FOLDER = os.path.abspath("./static/uploads/")
-        # paths['TEMPLATE'] = TEMPLATE_FOLDER
-        # paths['PICTURES'] = ELEMENTS_FOLDER
-        # paths['ARTS_DIR'] = PICTURES_FOLDER
-        # paths['CERTIFICATES'] = CERTIFICATE_FOLDER
-        # result = consulta_contrato_hash(conexion,certificate)
-        # generate_PDF(paths,result)
         close_db(conexion)
         return render_template('certificate.html',opc=1,id=response)
         # opc = Authentic
@@ -397,10 +383,27 @@ def CheckSigns():
     if(filename==""):
         return "Select a valid file"
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config["VERIFY_FOLDER"],filename))
-        # Comprobar firma digital de los tres actores
-        return "Digital signatures match"
+        conexion = conecta_db("DESart.db")
+        data = consulta_contrato_porID(conexion,idContrac)
+        file.save(os.path.join(app.config["VERIFY_FOLDER"],data[5]))
+        # Public Notary verifies signature
+        notary_public_key = consulta_public_keyRSA(conexion,data[4])
+        notary_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],notary_public_key)
+        response = verify_signature(app.config["VERIFY_FOLDER"],data[5],notary_public_key_rsa,0)
+        # Client verifies signature
+        client_public_key = consulta_public_keyRSA(conexion,data[3])
+        client_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],client_public_key)
+        response = verify_signature(app.config["VERIFY_FOLDER"],data[5],client_public_key_rsa,1)
+        # Artist verifies signature
+        artist_public_key = consulta_public_keyRSA(conexion,data[2])
+        artist_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],artist_public_key)
+        response = verify_signature(app.config["VERIFY_FOLDER"],data[5],artist_public_key_rsa,2)
+        close_db(conexion)
+        rm_img(app.config["VERIFY_FOLDER"],data[5])
+        if(response=="Art signed successful"):
+            return "Digital signatures match"
+        else:
+            return response
 
 
 def init_db():

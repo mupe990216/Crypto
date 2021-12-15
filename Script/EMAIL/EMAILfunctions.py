@@ -12,7 +12,7 @@ def send_contracts_email(files,data):
         remitente = "D-E-S art support"
         destinatario = "{};{};{}".format(data[6],data[7],data[8])
         asunto = "Contract D-E-S art"
-        mensaje = "<h1>Contract of art</h1><br><p>Artist: {}</p><br><p>Client: {}</p><br><p>Public Notary: {}</p><p>Certificate registration: <a href='localhost/contracts/{}'>{}</a></p>".format(data[6],data[7],data[8],data[1],data[1])
+        mensaje = "<h1>Contract of art</h1><br><p>Artist: {}</p><p>Client: {}</p><p>Public Notary: {}</p><br><p>Certificate registration: <a href='localhost/contracts/{}'>{}</a></p>".format(data[6],data[7],data[8],data[1],data[1])
         certificate = files['CERTIFICATES']+"\\"+data[1]+".pdf"
         digital_Art = files['A_SIGNED']+"\\"+data[5]
         Tconditions = files['CONDITIONS']+"\\"+"terms.pdf"

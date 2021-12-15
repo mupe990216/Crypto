@@ -50,3 +50,28 @@ function verify() {
         swal("Filed empty", "Select the image of your contract", "error");
     }
 }
+
+function validarExt() {
+    let archivoInput = document.getElementById('imageFile');
+    let archivoRuta = archivoInput.value;
+    let extPermitidas = /(.jpg|.png)$/i;
+    if (!extPermitidas.exec(archivoRuta)) {
+        swal("Denied!", "Select a valid image", "error");
+        archivoInput.value = '';
+        let imagetest = document.getElementById('imagetest');
+        if (imagetest != null) {
+            imagetest.src = '';
+        }
+        return false;
+    } else {
+        //PRevio del PDF
+        if (archivoInput.files && archivoInput.files[0]) {
+            let visor = new FileReader();
+            visor.onload = function (e) {
+                document.getElementById('visorArchivo').innerHTML =
+                    '<embed id="imagetest" src="' + e.target.result + '" width="400" style="height: auto; object-fit: cover; object-position: center center;" />';
+            };
+            visor.readAsDataURL(archivoInput.files[0]);
+        }
+    }
+}

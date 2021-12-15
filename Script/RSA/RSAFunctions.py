@@ -100,6 +100,35 @@ def verify_signature(path,fileName,public_key,ignore = 0):
         return "Invalid Art"
 
 # generate_key_RSA("./")
+# public_key_artist = read_public_key("../../keys/","6519e2d6b68f043e92864c2106b52c3a9195cbc5cacdf973389b5db98d57738e.key")
+# private_key_artist = read_private_key("../../keys/","5b50a9bbbe618f38b7289b7ffef3a4609392c7681501ae8f0c0960762d407a97.key")
+# print("Artist Sign: "+signing_data("./","test2.jpg","./artist/", private_key_artist))
+# print("Artist Very: "+verify_signature("./artist/","test2.jpg",public_key_artist))
+
+# public_key_client = read_private_key("../../keys/","c5aae9adb097ad23584b47cdf2bc3313edf4aa4978bf21d10f73b52a1215e6e5.key")
+# private_key_client = read_private_key("../../keys/","9aa99cb2dc2e78b69a1160f87c9bf1608e0ab13d52557ad89ad14126c9d763b7.key")
+# print("Client Sign: "+signing_data("./artist/","test2.jpg","./client/", private_key_client))
+# print("Client Very: "+verify_signature("./client/","test2.jpg",public_key_client))
+
+# public_key_notary = read_private_key("../../keys/","2941f9418888ad88f00a7dfd4532983e2499cafae6073f43ea3230a688eb03a5.key")
+# private_key_notary = read_private_key("../../keys/","aa3d9072877bbc5a75e025aa5517fbec2021978e8f685569101bedf509670824.key")
+# print("Notary Sign: "+signing_data("./client/","test2.jpg","./notary/", private_key_notary))
+# print("Notary Very: "+verify_signature("./notary/","test2.jpg",public_key_notary))
+
+# private_key_ext = read_private_key("./","8efda4ffc4dfd9e0f005ae95cf39acfc53962730d4c6fa4795daee33087b4169.key")
+# public_key_ext = read_private_key("./","2c3f1b028e5cc495ae4314e10a30f4ad2a8406cb6e7f6999ed856a1fd656d144.key")
+# print("Other Very: "+verify_signature("./notary/","test2.jpg",public_key_ext))
+
+
+# print("Artist Very: "+verify_signature("./client/","test2.jpg",public_key_artist,1))
+# print("Client Very: "+verify_signature("./client/","test2.jpg",public_key_client,0))
+
+
+# print("Artist Very: "+verify_signature("./notary/","test2.jpg",public_key_artist,2))
+# print("Client Very: "+verify_signature("./notary/","test2.jpg",public_key_client,1))
+# print("Notary Very: "+verify_signature("./notary/","test2.jpg",public_key_notary,0))
+
+
 # private_key_artist = read_private_key("./","4965b53e810067ffb5350d2add29eb028fdbfe85202a2ea6f622e001135e429d.key")
 # public_key_artist = read_private_key("./","a8f518aa68ba86a4d89e4cb116ebd91a63260f3d7490e407e1cd5868db7e7552.key")
 # print("Artist Sign: "+signing_data("./","test2.jpg","./artist/", private_key_artist))
@@ -122,6 +151,4 @@ def verify_signature(path,fileName,public_key,ignore = 0):
 # print("Artist Very: "+verify_signature("./notary/","test2.jpg",public_key_client))
 # print("Client Very: "+verify_signature("./notary/","test2.jpg",public_key_client))
 # print("Notary Very: "+verify_signature("./notary/","test2.jpg",public_key_client))
-
-
 

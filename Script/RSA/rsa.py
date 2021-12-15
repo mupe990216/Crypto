@@ -256,7 +256,6 @@ class RSA_sign:
 # print('Verificando 2 - Firma del cliente (cuando ya firmo el artista)')
 # signed_file_aux = open('contract_' + 'myContract_2' + ext, 'rb')
 # rsa2.verify_signature(signed_file_aux.read())
-
 # signed_file_aux.close()
 # img.close()
 

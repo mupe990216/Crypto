@@ -6,7 +6,7 @@
 function validarExt() {
     let archivoInput = document.getElementById('imageFile');
     let archivoRuta = archivoInput.value;
-    let extPermitidas = /(.jpg|.png|.jpeg)$/i;
+    let extPermitidas = /(.jpg|.png)$/i;
     if (!extPermitidas.exec(archivoRuta)) {
         swal("Denied!", "Select a valid image", "error");
         archivoInput.value = '';
