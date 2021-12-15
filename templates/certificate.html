@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.: Certificate :.</title>
+    <link rel="shortcut icon" href="{{ url_for('static',filename='img/lv.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static',filename='img/lv.ico') }}" type="image/x-icon">
+    <style>
+        html,
+        body {
+            height: 70%;
+        }
+
+        body {
+            background-color: #DDECF4;
+            background-size: 100% 100%;
+            font-family: Arial;
+            font-weight: 300;
+            height: 100%;
+            text-align: center;
+            color: rgb(65, 45, 25);
+        }
+
+        .bold {
+            font-weight: 700;
+            font-size: 3.8em;
+            display: inline;
+            padding: 2%;
+        }
+
+        .titles {
+            font-weight: 300;
+            font-size: 1.8em;
+            color: rgb(50, 175, 180);
+        }
+        .field {
+            font-weight: 300;
+            font-size: 1em;
+            color:rgb(110,160,130);
+        }
+    </style>
+</head>
+
+<body oncopy="return false" oncut="return false" onpaste="return false" oncontextmenu="return false"
+    ondragstart="return false" onselectstart="return false" onkeydown="return false">
+    <div style="padding-top: 80px;">
+        <div>
+            <img src="{{ url_for('static',filename='img/logo.png') }}" width="100">
+            <h1 class="bold">Certificate of art</h1>
+            <img src="{{ url_for('static',filename='img/ESCOM.png') }}" width="100">
+            <br><br><br>
+            <img src="{{ url_for('static',filename='img/ESCOM.png') }}" width="380">
+            <p class="titles">Artist:</p>
+            <p class="field">{{id}}</p>
+            <p class="titles">Client:</p>
+            <p class="field">{{id}}</p>
+            <p class="titles">Public Notary:</p>
+            <p class="field">{{id}}</p>
+            <br><br><br>
+            <p><b>Registro de certificado:</b><a target="_blank" href="http://localhost/contracts/{{id}}">{{id}}</a></p>
+        </div>
+    </div>
+</body>
+
+</html>

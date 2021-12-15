@@ -214,7 +214,7 @@ def contracts():
 @app.route('/contracts/<certificate>',methods=['GET'])
 def certificate(certificate):
     # Mostrar el Certificado en PDF
-    return certificate
+    return render_template('certificate.html',id=certificate)
 
 @app.route('/artPublic',methods=['GET'])
 def public():
