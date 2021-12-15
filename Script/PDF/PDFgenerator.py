@@ -1,4 +1,4 @@
-import pdfkit, base64
+import pdfkit, base64, time
 from jinja2 import Environment, FileSystemLoader
 
 def get_image_file_as_base64_data(pathFile):
@@ -19,3 +19,4 @@ def generate_PDF(paths,data):
     newPDF = paths['CERTIFICATES']+"\\"+data[1]+".pdf"
     pdfkit.from_string(html,newPDF,configuration=config)
     print(" * PDF Created")
+    time.sleep(0.5)

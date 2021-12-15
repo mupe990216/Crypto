@@ -5,6 +5,7 @@ from Script.PIC.pictures import *
 from Script.RSA.RSAFunctions import *
 from Script.AES.AESfunctions import *
 from Script.PDF.PDFgenerator import *
+from Script.EMAIL.EMAILfunctions import *
 from flask import Flask, render_template, request, url_for, redirect, session
 from werkzeug.utils import secure_filename
 KEY_FOLDER = os.path.abspath("./keys/")
@@ -182,14 +183,18 @@ def picture():
                     TEMPLATE_FOLDER = os.path.abspath("./templates/")
                     ELEMENTS_FOLDER = os.path.abspath("./static/img/")
                     PICTURES_FOLDER = os.path.abspath("./static/uploads/")
+                    ARTSSIGN_FOLDER = os.path.abspath("./static/signed/")
+                    CONDITIO_FOLDER = os.path.abspath("./static/")
                     paths['TEMPLATE'] = TEMPLATE_FOLDER
                     paths['PICTURES'] = ELEMENTS_FOLDER
                     paths['ARTS_DIR'] = PICTURES_FOLDER
+                    paths['A_SIGNED'] = ARTSSIGN_FOLDER
+                    paths['CONDITIONS'] = CONDITIO_FOLDER
                     paths['CERTIFICATES'] = CERTIFICATE_FOLDER
-                    result = consulta_contrato_hash(conexion,certificate)
-                    generate_PDF(paths,result)
+                    queryContract = consulta_contrato_hash(conexion,certificate)
+                    generate_PDF(paths,queryContract)
+                    send_contracts_email(paths,queryContract)
                     close_db(conexion)
-                    # Falta Enviar Los Archivos Por Email
                     return response                    
                 return "Error - TypeUser"
         else:

@@ -56,6 +56,7 @@
             <!-- Generate HTML -->
             {% if opc == 1 %}
             <div>
+                <img src="{{ url_for('static',filename='preview/'+id[5]) }}" width="330">
                 <h1 style="font-size: 2.5em; color:green;">Authentic</h1>
                 <p class="titles">Artist:</p>
                 <p class="field">{{id[6]}}</p>
