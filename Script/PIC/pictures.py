@@ -29,14 +29,11 @@ def hash_img(path,filename):
 def rm_img(path,filename):
     oldPath = path+"\\"+filename
     os.remove(oldPath)
+    print(" * Image eliminated")
 
-# La imagen 
-
-# if __name__ == '__main__':
-#     text = "©D-E-S art"
-#     director_path="./images/"#Guardar la ruta de la carpeta de imágenes
-#     pictures=os.listdir(director_path)# Obtenga todos los nombres de las imágenes en la carpeta
-#     for pic in pictures:
-#         filename=director_path+pic#Construye el nombre de la ruta de cada imagen
-#         watermark(filename,text,pic)#Añadir marca de agua
-#     print("Todo procesado")
+# Se copia la imagen a una nueva ruta
+def copy_img(oldPath, filename, newPath):
+    old_path = oldPath+"\\"+filename
+    new_path = newPath+"\\"+filename
+    shutil.copyfile(old_path, new_path)
+    print(" * Image to sign copied")

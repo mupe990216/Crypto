@@ -22,7 +22,7 @@ function buyArt() {
                     },
                     cache: false,
                     success: function (response) {
-                        if (response == "Purchase completed") {
+                        if (response == "Art signed successful") {
                             swal({
                                 title: "Process successful",
                                 text: response,

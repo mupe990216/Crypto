@@ -449,14 +449,16 @@ def consulta_contrato_hash(conexion,hashContract):
     if (respuesta!=None):
         return respuesta
 
-# Test section
-# conexion = conecta_db("DESart.db")
-# crea_tbs(conexion)
-# info = {'usur': 'elias160299', 'pswd': '12345678', 'name': 'Elias', 'ape1': 'Muñoz', 'ape2': 'Primero', 'age': '22', 'gend': '2', 'uTyp': '3', 'email': 'elias160299@hotmail.com'}
-# alta_usr(conexion,info)
-# consulta_nombre(conexion,'75b3978b7f22dfd20f713d00f8fb2658542c5c4752e163ba21a4e375177a7269')
-# print(consulta_art_especifica(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png').fetchone())
-# print(modifica_art(conexion,'9c23a9ce1dbdcaf3ad6f6d76f20741c34e3951b1f5d880666cf27b6c9f06e663.png'))
-# list_public_art(consulta_art_conFirma_public(conexion).fetchall())
-# consulta_precontrato_especi(conexion,'1')
-# close_db(conexion)
+def consulta_private_keyRSA(conexion,user):
+    cursor_tb = conexion.cursor()
+    sentencia = "select privateKey from RSAKeys where usr='{}'".format(user)
+    respuesta = cursor_tb.execute(sentencia).fetchone()
+    if (respuesta!=None):
+        return respuesta[0]
+
+def consulta_public_keyRSA(conexion,user):
+    cursor_tb = conexion.cursor()
+    sentencia = "select publicKey from RSAKeys where usr='{}'".format(user)
+    respuesta = cursor_tb.execute(sentencia).fetchone()
+    if (respuesta!=None):
+        return respuesta[0]

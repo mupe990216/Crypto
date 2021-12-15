@@ -37,7 +37,7 @@ function signContract() {
                     },
                     cache: false,
                     success: function (response) {
-                        if (response == "Signed contract") {
+                        if (response == "Art signed successful") {
                             swal({
                                 title: "Process successful",
                                 text: response,

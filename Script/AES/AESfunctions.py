@@ -3,7 +3,7 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
 
-def key_generation(path,name):
+def key_generation_AES(path,name):
     oldPath = path+"\\"+name
     key = get_random_bytes(16) # Size 128 bits
     fileBase64 = base64.b64encode(key)

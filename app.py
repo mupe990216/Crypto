@@ -14,6 +14,7 @@ VERIFY_FOLDER = os.path.abspath("./static/verify/")
 CIPHER_FOLDER = os.path.abspath("./static/ciphers/")
 UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
 PREVIEW_FOLDER = os.path.abspath("./static/preview/")
+ARTSSIGN_FOLDER = os.path.abspath("./static/signed/")
 DECIPHER_FOLDER = os.path.abspath("./static/deciphers/")
 CERTIFICATE_FOLDER = os.path.abspath("./static/certificates/")
 
@@ -24,6 +25,7 @@ app.config["ART_FOLDER"] = ART_FOLDER
 app.config["VERIFY_FOLDER"] = VERIFY_FOLDER
 app.config["CIPHER_FOLDER"] = CIPHER_FOLDER
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["SIGNED_FOLDER"] = ARTSSIGN_FOLDER
 app.config["PREVIEW_FOLDER"] = PREVIEW_FOLDER
 app.config["DECIPHER_FOLDER"] = DECIPHER_FOLDER
 app.config["CERTIFICATE_FOLDER"] = CERTIFICATE_FOLDER
@@ -159,19 +161,43 @@ def picture():
                     conexion = conecta_db("DESart.db")
                     response = modifica_art(conexion,hashname)
                     watermark(app.config["UPLOAD_FOLDER"],hashname,app.config["PREVIEW_FOLDER"])
-                    keyname = key_generation(app.config["KEY_FOLDER"],'key')
+                    keyname = key_generation_AES(app.config["KEY_FOLDER"],'key')
                     registra_keySinFirma(conexion,keyname,hashname)
                     encrypt_AES(app.config["KEY_FOLDER"],keyname,app.config["UPLOAD_FOLDER"],hashname,app.config["CIPHER_FOLDER"])
                     decrypt_AES(app.config["KEY_FOLDER"],keyname,app.config["CIPHER_FOLDER"],hashname,app.config["DECIPHER_FOLDER"])
-                    close_db(conexion)
-                    # Falta que el artiste firme la imagen
-                    return response
+                    if(response=="Art signed successful"):
+                        # copy_img(app.config["UPLOAD_FOLDER"],hashname,app.config["SIGNED_FOLDER"])
+                        # Artist signature
+                        name_private_key = consulta_private_keyRSA(conexion,session["user"])
+                        private_key_rsa = read_private_key(app.config["KEY_FOLDER"],name_private_key)
+                        response = signing_data(app.config["UPLOAD_FOLDER"],hashname,app.config["SIGNED_FOLDER"], private_key_rsa)
+                        # Artist verifies signature
+                        name_public_key = consulta_public_keyRSA(conexion,session["user"])
+                        public_key_rsa = read_public_key(app.config["KEY_FOLDER"],name_public_key)
+                        response = verify_signature(app.config["SIGNED_FOLDER"],hashname,public_key_rsa)
+
+                        # AES Cipher
+
+                        close_db(conexion)
+                        return response
                 if(typeUser=="2"): #Client
                     artist = request.form['user']
                     conexion = conecta_db("DESart.db")
                     response = crea_precontrato(conexion,hashname,artist,session["user"])
+                    # Client signature
+                    name_private_key = consulta_private_keyRSA(conexion,session["user"])
+                    private_key_rsa = read_private_key(app.config["KEY_FOLDER"],name_private_key)
+                    response = signing_data(app.config["SIGNED_FOLDER"],hashname,app.config["CERTIFICATE_FOLDER"], private_key_rsa)
+                    copy_img(app.config["CERTIFICATE_FOLDER"], hashname, app.config["SIGNED_FOLDER"])
+                    rm_img(app.config["CERTIFICATE_FOLDER"], hashname)
+                    # Client verifies signature
+                    name_public_key = consulta_public_keyRSA(conexion,session["user"])
+                    public_key_rsa = read_public_key(app.config["KEY_FOLDER"],name_public_key)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,public_key_rsa)
+
+                    # AES Cipher
+
                     close_db(conexion)
-                    # Falta que el cliente firme la imagen
                     return response
                 if(typeUser=="3"): #Public Notary
                     # Falta que el notario publico firme la imagen
@@ -179,18 +205,37 @@ def picture():
                     conexion = conecta_db("DESart.db")
                     response = modifica_precontrato(conexion,dataJson['idPreCont'])
                     response,certificate = crea_contrato(conexion,dataJson)
+                    # TEMPLATE_FOLDER = os.path.abspath("./templates/")
+                    # ELEMENTS_FOLDER = os.path.abspath("./static/img/")
+                    # PICTURES_FOLDER = os.path.abspath("./static/uploads/")
+                    # CONDITIO_FOLDER = os.path.abspath("./static/")
+                    # paths['TEMPLATE'] = TEMPLATE_FOLDER
+                    # paths['PICTURES'] = ELEMENTS_FOLDER
+                    # paths['ARTS_DIR'] = PICTURES_FOLDER
+                    # paths['A_SIGNED'] = ARTSSIGN_FOLDER
+                    # paths['CONDITIONS'] = CONDITIO_FOLDER
+                    # paths['CERTIFICATES'] = CERTIFICATE_FOLDER
+                    # Public notary signature
+                    name_private_key = consulta_private_keyRSA(conexion,session["user"])
+                    private_key_rsa = read_private_key(app.config["KEY_FOLDER"],name_private_key)
+                    response = signing_data(app.config["SIGNED_FOLDER"],hashname,app.config["CERTIFICATE_FOLDER"], private_key_rsa)
+                    copy_img(app.config["CERTIFICATE_FOLDER"], hashname, app.config["SIGNED_FOLDER"])
+                    rm_img(app.config["CERTIFICATE_FOLDER"], hashname)
+                    # Public Notary verifies signature
+                    notary_public_key = consulta_public_keyRSA(conexion,session["user"])
+                    notary_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],notary_public_key)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,notary_public_key_rsa)
+                    # Client verifies signature
+                    client_public_key = consulta_public_keyRSA(conexion,dataJson['userClient'])
+                    client_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],client_public_key)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,client_public_key_rsa)
+                    # Artist verifies signature
+                    artist_public_key = consulta_public_keyRSA(conexion,dataJson['userArtist'])
+                    artist_public_key_rsa = read_public_key(app.config["KEY_FOLDER"],artist_public_key)
+                    response = verify_signature(app.config["SIGNED_FOLDER"],hashname,artist_public_key_rsa)
+                    # AES Cipher
                     paths = dict()
-                    TEMPLATE_FOLDER = os.path.abspath("./templates/")
-                    ELEMENTS_FOLDER = os.path.abspath("./static/img/")
-                    PICTURES_FOLDER = os.path.abspath("./static/uploads/")
-                    ARTSSIGN_FOLDER = os.path.abspath("./static/signed/")
-                    CONDITIO_FOLDER = os.path.abspath("./static/")
-                    paths['TEMPLATE'] = TEMPLATE_FOLDER
-                    paths['PICTURES'] = ELEMENTS_FOLDER
-                    paths['ARTS_DIR'] = PICTURES_FOLDER
-                    paths['A_SIGNED'] = ARTSSIGN_FOLDER
-                    paths['CONDITIONS'] = CONDITIO_FOLDER
-                    paths['CERTIFICATES'] = CERTIFICATE_FOLDER
+                    define_paths(paths)
                     queryContract = consulta_contrato_hash(conexion,certificate)
                     generate_PDF(paths,queryContract)
                     send_contracts_email(paths,queryContract)
@@ -202,6 +247,18 @@ def picture():
     except Exception as e:
         print("\n *** Exception picture: {} \n".format(e))
         return redirect(url_for("init"))
+
+def define_paths(paths):
+    TEMPLATE_FOLDER = os.path.abspath("./templates/")
+    ELEMENTS_FOLDER = os.path.abspath("./static/img/")
+    PICTURES_FOLDER = os.path.abspath("./static/uploads/")
+    CONDITIO_FOLDER = os.path.abspath("./static/")
+    paths['TEMPLATE'] = TEMPLATE_FOLDER
+    paths['PICTURES'] = ELEMENTS_FOLDER
+    paths['ARTS_DIR'] = PICTURES_FOLDER
+    paths['A_SIGNED'] = ARTSSIGN_FOLDER
+    paths['CONDITIONS'] = CONDITIO_FOLDER
+    paths['CERTIFICATES'] = CERTIFICATE_FOLDER
 
 @app.route('/contracts',methods=['GET'])
 def contracts():
