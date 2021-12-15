@@ -422,7 +422,7 @@ def crea_contrato(conexion,dic):
         cursor_tb.execute(sentencia,(idCont,dic['userArtist'],dic['userClient'],dic['userPnotar'],dic['hashname'],dic['emailArtist'],dic['emailClient'],dic['emailPnotar']))
         conexion.commit()
         mensaje = "Signed contract"
-    return mensaje
+    return mensaje,idCont
 
 def consulta_contratos(conexion,user,typeUser):
     cursor_tb = conexion.cursor()
@@ -438,6 +438,13 @@ def consulta_contratos(conexion,user,typeUser):
 def consulta_contrato_porID(conexion,idContrato):
     cursor_tb = conexion.cursor()
     sentencia = "select * from Contracts where idContract='{}'".format(idContrato)
+    respuesta = cursor_tb.execute(sentencia).fetchone()
+    if (respuesta!=None):
+        return respuesta
+
+def consulta_contrato_hash(conexion,hashContract):
+    cursor_tb = conexion.cursor()
+    sentencia = "select * from Contracts where hashContract='{}'".format(hashContract)
     respuesta = cursor_tb.execute(sentencia).fetchone()
     if (respuesta!=None):
         return respuesta

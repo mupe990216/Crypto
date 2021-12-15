@@ -1,10 +1,10 @@
 import json, os
-
 from flask.wrappers import Response
 from Script.BD.database import *
 from Script.PIC.pictures import *
 from Script.RSA.RSAFunctions import *
 from Script.AES.AESfunctions import *
+from Script.PDF.PDFgenerator import *
 from flask import Flask, render_template, request, url_for, redirect, session
 from werkzeug.utils import secure_filename
 KEY_FOLDER = os.path.abspath("./keys/")
@@ -177,10 +177,20 @@ def picture():
                     dataJson = json.loads(request.form['dataJson'])
                     conexion = conecta_db("DESart.db")
                     response = modifica_precontrato(conexion,dataJson['idPreCont'])
-                    response = crea_contrato(conexion,dataJson)
+                    response,certificate = crea_contrato(conexion,dataJson)
+                    paths = dict()
+                    TEMPLATE_FOLDER = os.path.abspath("./templates/")
+                    ELEMENTS_FOLDER = os.path.abspath("./static/img/")
+                    PICTURES_FOLDER = os.path.abspath("./static/uploads/")
+                    paths['TEMPLATE'] = TEMPLATE_FOLDER
+                    paths['PICTURES'] = ELEMENTS_FOLDER
+                    paths['ARTS_DIR'] = PICTURES_FOLDER
+                    paths['CERTIFICATES'] = CERTIFICATE_FOLDER
+                    result = consulta_contrato_hash(conexion,certificate)
+                    generate_PDF(paths,result)
                     close_db(conexion)
-                    return response
-                    # return "Signed contract"
+                    # Falta Enviar Los Archivos Por Email
+                    return response                    
                 return "Error - TypeUser"
         else:
             return redirect(url_for("init"))
@@ -214,7 +224,27 @@ def contracts():
 @app.route('/contracts/<certificate>',methods=['GET'])
 def certificate(certificate):
     # Mostrar el Certificado en PDF
-    return render_template('certificate.html',id=certificate)
+    conexion = conecta_db("DESart.db")
+    response = valida_contrato(conexion,certificate)
+    if(response=="Contrato existente"):
+        response = consulta_contrato_hash(conexion,certificate)
+        # paths = dict()
+        # TEMPLATE_FOLDER = os.path.abspath("./templates/")
+        # ELEMENTS_FOLDER = os.path.abspath("./static/img/")
+        # PICTURES_FOLDER = os.path.abspath("./static/uploads/")
+        # paths['TEMPLATE'] = TEMPLATE_FOLDER
+        # paths['PICTURES'] = ELEMENTS_FOLDER
+        # paths['ARTS_DIR'] = PICTURES_FOLDER
+        # paths['CERTIFICATES'] = CERTIFICATE_FOLDER
+        # result = consulta_contrato_hash(conexion,certificate)
+        # generate_PDF(paths,result)
+        close_db(conexion)
+        return render_template('certificate.html',opc=1,id=response)
+        # opc = Authentic
+    else:
+        close_db(conexion)
+        return render_template('certificate.html',opc=2)
+        # opc = Fake
 
 @app.route('/artPublic',methods=['GET'])
 def public():

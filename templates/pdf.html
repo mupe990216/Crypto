@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>.: Certificate :.</title>
-    <link rel="shortcut icon" href="{{ url_for('static',filename='img/lv.ico') }}" type="image/x-icon">
-    <link rel="icon" href="{{ url_for('static',filename='img/lv.ico') }}" type="image/x-icon">
     <style>
         html,
         body {
@@ -47,16 +44,19 @@
 
 <body oncopy="return false" oncut="return false" onpaste="return false" oncontextmenu="return false"
     ondragstart="return false" onselectstart="return false" onkeydown="return false">
-    <div style="padding-top: 30px;">
+    <div style="padding-top: 80px;">
         <div>
-            <img src="{{ url_for('static',filename='img/logo.png') }}" width="100">
+            <img src="data:;base64,{{ DESart }}" width="100">
             <h1 class="bold">Certificate of art</h1>
-            <img src="{{ url_for('static',filename='img/ESCOM.png') }}" width="100">
+            <img src="data:;base64,{{ ESCOM }}" width="100">
             <br><br><br>
-            <!-- Generate HTML -->
-            {% if opc == 1 %}
+            <!-- Generate PDF -->
             <div>
-                <h1 style="font-size: 2.5em; color:green;">Authentic</h1>
+                <br><br>
+                <!-- <a href="{{pathImg}}">{{pathImg}}</a> -->
+                <!-- <img src="../uploads/{{id[5]}}" width="380"> -->
+                <img src="data:;base64,{{ art }}" width="380">
+                <br><br>
                 <p class="titles">Artist:</p>
                 <p class="field">{{id[6]}}</p>
                 <p class="titles">Client:</p>
@@ -68,14 +68,7 @@
                         href="http://localhost/contracts/{{id[1]}}">{{id[1]}}</a>
                 </p>
             </div>
-            {% endif %}
-            <!-- Generate HTML -->
-
-            {% if opc == 2 %}
-            <div>
-                <h1 style="font-size: 2.5em; color:red;">Fake</h1>
-            </div>
-            {% endif %}
+            <!-- Generate PDF -->
         </div>
     </div>
 </body>
