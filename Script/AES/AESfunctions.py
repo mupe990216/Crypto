@@ -31,6 +31,7 @@ def encrypt_AES(pathkey,keyName,pathOld,imgName,pathNew):
     key = read_key(pathkey,keyName)
     # Read a original image
     cipher = AES.new(key, AES.MODE_CBC)
+    # cipher = AES.new(key, AES.MODE_GCM)
     pFile = open(oldpath,"rb")
     plaintext = pFile.read()
     pFile.close

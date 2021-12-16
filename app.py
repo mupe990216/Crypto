@@ -1,5 +1,4 @@
 import json, os
-from flask.wrappers import Response
 from Script.BD.database import *
 from Script.PIC.pictures import *
 from Script.RSA.RSAFunctions import *
